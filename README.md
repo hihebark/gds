@@ -1,4 +1,7 @@
 Wanted to learn Golang:
-+++++++++++++++++++++++
+=======================
 
-#godirsearch
+<center> ![Golang gopher](https://golang.org/doc/gopher/pkg.png) </center>
+
+godirsearch
+-----------
