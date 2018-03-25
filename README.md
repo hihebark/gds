@@ -5,3 +5,19 @@ Wanted to learn Golang:
 
 godirsearch
 -----------
+```
+GoDirSearch -v ~0.0.1
+Usage of /tmp/go-build554581829/command-line-arguments/_obj/exe/main:
+  -host string
+    	Host to brutforce
+  -proxy string
+    	Use a proxy to brutforce
+  -proxyfile string
+    	Use a proxy file
+  -thread int
+    	Number of thread (default 4)
+  -tor
+    	Brutforce using Tor
+  -version string
+    	print version (default "v ~0.0.1")
+```
