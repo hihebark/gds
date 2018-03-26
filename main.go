@@ -3,6 +3,7 @@ package main
 /**
 * DONE regex for verifing url
 * DONE check the connecivity to the url
+* TODO set Cookies
 * TODO generating json file of the result +
 * TODO a log file for debbuging
 * TODO use goroutine just for fun and for learning //for thread
@@ -11,14 +12,12 @@ package main
 import (
         "os"
         "fmt"
-//        "log"
-        "bufio"
         "flag"
+        "bufio"
         "regexp"
         "strings"
-        "net/http"
         "net/url"
-//        "io/ioutil"
+        "net/http"
 
         "github.com/hihebark/godirsearch/core"
 )
@@ -30,14 +29,16 @@ var (
     thread      *int
     version     *string
     proxyfile   *string
+    
+    urlpath     string
 )
 
-type Cons struct {
-    status      *int
-    length      *int64
-    hostpath    *string
-    time        *string
-}
+//type Cons struct {
+//    status      *int
+//    length      *int64
+//    hostpath    *string
+//    time        *string
+//}
 
 func init(){
     tor         = flag.Bool("tor", false, "Brutforce using Tor")
@@ -50,15 +51,15 @@ func init(){
 }
 
 func main() {
-    fmt.Println("\tGoDirSearch -v ~0.0.1")
+    fmt.Println("\tGoDirSearch -v ~0.0.2\n")
     flag.Parse()
-    /*
+    /***************************************************************************
     * Best regex `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
     * http://www.golangprograms.com/golang-package-examples/regular-expression-to-extract-domain-from-url.html
     */
     re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
     status := core.CheckConnectivty(*host)
-    if (re.MatchString(*host) && (status >= 200 && status <= 300)){
+    if (re.MatchString(*host) && (status >= 200 && status < 300)){
         if (!strings.HasSuffix(*host, "/")){
             *host += "/"
         }
@@ -76,17 +77,17 @@ func main() {
         if(err != nil){
             fmt.Println(err)
         }
-        var urlpath string
+        
         for err == nil {
-            //fmt.Println(*host+path)
-            //MakeRequest(host string, req *http.Request, client http.Client)
+        
             murl.Path = path
             urlpath = murl.String()
-            req, _ := http.NewRequest("GET", urlpath, nil)
+            req, _ := http.NewRequest("HEAD", urlpath, nil)
             req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
-            mstatus, mlenght := core.MakeRequest(*host+path, req, *client)
-            fmt.Printf("Status: %d - %d\tPath: %s\n", mstatus, mlenght, *host+path)
+            mstatus, mlength := core.MakeRequest(*host+path, req, *client)
+            fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, core.ByteConverter(mlength), *host+path)
             path,err = core.Readln(reader)
+        
         }
     } else {
         fmt.Println("\033[91mHost not recheable status:\033[0m", status)
