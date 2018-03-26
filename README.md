@@ -7,7 +7,7 @@ godirsearch
 -----------
 ```
 GoDirSearch -v ~0.0.1
-Usage of /tmp/go-build554581829/command-line-arguments/_obj/exe/main:
+Usage of GoDirSearch:
   -host string
     	Host to brutforce
   -proxy string
