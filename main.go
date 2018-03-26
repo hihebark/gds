@@ -17,6 +17,7 @@ import (
         "regexp"
         "strings"
         "net/http"
+        "net/url"
 //        "io/ioutil"
 
         "github.com/hihebark/godirsearch/core"
@@ -70,13 +71,21 @@ func main() {
         reader := bufio.NewReader(file)
         path, err := core.Readln(reader)
         client := &http.Client{}
-        req, err := http.NewRequest("GET", *host, nil)
-        req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
+        
+        murl, err := url.ParseRequestURI(*host)
+        if(err != nil){
+            fmt.Println(err)
+        }
+        var urlpath string
         for err == nil {
             //fmt.Println(*host+path)
             //MakeRequest(host string, req *http.Request, client http.Client)
+            murl.Path = path
+            urlpath = murl.String()
+            req, _ := http.NewRequest("GET", urlpath, nil)
+            req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
             mstatus, mlenght := core.MakeRequest(*host+path, req, *client)
-            fmt.Printf("Status: %d - %d\tPath:%s\n", mstatus, mlenght, *host+path)
+            fmt.Printf("Status: %d - %d\tPath: %s\n", mstatus, mlenght, *host+path)
             path,err = core.Readln(reader)
         }
     } else {

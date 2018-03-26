@@ -23,7 +23,7 @@ func MakeRequest(host string, req *http.Request, client http.Client) (int, int64
     if (err != nil){
         log.Fatalln("MakeRequest: ",err, host)
     }
-    return resp.StatusCode, req.ContentLength
+    return resp.StatusCode, resp.ContentLength
 
 }
 
