@@ -1,13 +1,15 @@
-Wanted to learn Golang:
-=======================
 
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
 
 godirsearch
------------
+===========
+Nothing to see here!
+
 ```
-GoDirSearch -v ~0.0.1
+	GoDirSearch ~0.0.2
 Usage of GoDirSearch:
+  -cookie string
+    	cookie
   -host string
     	Host to brutforce
   -proxy string
@@ -18,6 +20,8 @@ Usage of GoDirSearch:
     	Number of thread (default 4)
   -tor
     	Brutforce using Tor
-  -version string
-    	print version (default "v ~0.0.1")
+  -useragent string
+    	userAgent (default "Golang_Spider_Bot/3.0")
+  -worlist string
+    	wordlist to brutforce (default "test.txt")
 ```
