@@ -5,17 +5,20 @@ godirsearch
 ===========
 Nothing to see here!
 
-TODO
-----
+TODO:
+-----
 
 - [x] DONE regex for verifing url
 - [x] DONE check the connecivity to the url
-- [ ] TODO set Cookies
 - [x] DONE set extension
+- [ ] TODO set Cookies
 - [ ] TODO generating json file of the result +
 - [ ] TODO a log file for debbuging
 - [ ] TODO use thread
 - [ ] TODO why no an UI Just saying
+
+Usage:
+------
 
 ```
 	GoDirSearch ~0.0.2
