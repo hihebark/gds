@@ -4,10 +4,11 @@ package main
 * DONE regex for verifing url
 * DONE check the connecivity to the url
 * TODO set Cookies
-* TODO set extension
+* DONE set extension
 * TODO generating json file of the result +
 * TODO a log file for debbuging
-* TODO use goroutine just for fun and for learning //for thread
+* TODO use thread
+* TODO why no an UI Just saying
 **/
 
 import (
