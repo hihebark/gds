@@ -27,7 +27,7 @@ func CountLine(r io.Reader) (int, error) {
     }
 }
 func ReadFromFile(filePath string){
-    
+
     file, err := os.Open(filePath)
     if err != nil {
         fmt.Println(err.Error() + `: ` + filePath)
@@ -40,7 +40,7 @@ func ReadFromFile(filePath string){
     for scanner.Scan() {
         fmt.Println(scanner.Text()) // the line
     }
-    
+
 }
 
 func Readln(r *bufio.Reader) (string, error) {
@@ -54,5 +54,5 @@ func Readln(r *bufio.Reader) (string, error) {
         ln = append(ln, line...)
     }
     return string(ln),err
-  
+
 }

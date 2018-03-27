@@ -4,6 +4,7 @@ import(
     "net/http"
     "net/url"
     "bufio"
+    "strings"
     "log"
     "fmt"
     "os"
@@ -11,17 +12,13 @@ import(
 
 var urlpath string
 
-type T struct {
-    S  string
-    is []int
-}
-
 type NetRequest struct{
     Host        string
     Proxyfile   string
     Wordlist    string
     UserAgent   string
     Cookie      string
+    Ex          []string
 }
 
 func CheckConnectivty(host string) (int){
@@ -78,37 +75,20 @@ func Fuxe(netreq NetRequest) {
     
         murl.Path = path
         urlpath = murl.String()
-        req, _ := http.NewRequest("HEAD", urlpath, nil)
+        req, _ := http.NewRequest("GET", urlpath, nil)
         req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
-        mstatus, mlength := MakeRequest(netreq.Host+path, req, *client)
-        fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), netreq.Host+path)
+        mstatus, mlength := MakeRequest(urlpath, req, *client)
+        fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), urlpath)
         path, err = Readln(reader)
+        if (!strings.HasSuffix(urlpath, "/") && len(netreq.Ex) !=0){
+            for _, ext := range netreq.Ex {
+                req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
+                mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
+                fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), urlpath+"."+ext)
+            }
+        }
     
     }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

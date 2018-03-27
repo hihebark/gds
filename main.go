@@ -25,18 +25,14 @@ import (
 const version string = "0.0.2"
 
 var (
-    tor         *bool
-    host        *string
-    proxy       *string
-    thread      *int
-    cookie      *string
-    wordlist    *string
-    proxyfile   *string
-    userAgent   *string
+    tor *bool
+    thread *int
+    host, proxy, cookie, wordlist, proxyfile, userAgent, ex *string
 )
 
 func init(){
-    
+
+    ex          = flag.String("ex", "", "separate with coma like php,txt ...")
     tor         = flag.Bool("tor", false, "Brutforce using Tor")
     host        = flag.String("host", "", "Host to brutforce")
     proxy       = flag.String("proxy", "", "Use a proxy to brutforce")
@@ -76,6 +72,7 @@ func main() {
                 Wordlist:*wordlist,
                 UserAgent:*userAgent,
                 Cookie:*cookie,
+                Ex:strings.Split(*ex, ","),
         }
         core.Fuxe(req)
     
