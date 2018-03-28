@@ -1,20 +1,6 @@
 package core
 
 import "fmt"
-//const (
-//    green, lightgreen, grey, black,
-//    red, lightred, cyan, lightcyan,
-//    blue, lightblue, purple, yellow,
-//    white, lightpurple, orange
-//)
-
-//type Label struct{
-//    info, que, bad, good, run string
-//}
-
-//type Styles struct{
-//    bg, bold, italic, under, strike string
-//}
 
 var (
     Green, Lightgreen, Grey, Black, Red, Lightred, Cyan, Lightcyan, Blue,
