@@ -11,6 +11,8 @@ TODO:
 - [x] DONE regex for verifing url
 - [x] DONE check the connecivity to the url
 - [x] DONE set extension
+- [x] DONE set proxy
+- [ ] TODO add read from grepproxylist.sh
 - [ ] TODO set Cookies
 - [ ] TODO generating json file of the result +
 - [ ] TODO a log file for debbuging

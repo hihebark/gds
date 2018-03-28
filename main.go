@@ -74,8 +74,10 @@ func main() {
                 UserAgent:*userAgent,
                 Cookie:*cookie,
                 Ex:strings.Split(*ex, ","),
+                Proxy:*proxy,
         }
-        core.Fuxe(req)
+        //core.Fuxe(req)
+        core.GetBody(req)
     
     } else {
         fmt.Println("\033[91mHost not recheable status:\033[0m", status)

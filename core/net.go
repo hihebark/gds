@@ -1,10 +1,12 @@
 package core
 
 import(
+    "io/ioutil"
     "net/http"
     "net/url"
     "bufio"
     "strings"
+    "time"
     "log"
     "fmt"
     "os"
@@ -19,6 +21,7 @@ type NetRequest struct{
     UserAgent   string
     Cookie      string
     Ex          []string
+    Proxy       string
 }
 
 func CheckConnectivty(host string) (int){
@@ -59,6 +62,19 @@ func ByteConverter(length int64) string{
 
 func Fuxe(netreq NetRequest) {
 
+    transport := &http.Transport{
+        MaxIdleConns:       10,
+        IdleConnTimeout:    30 * time.Second,
+        DisableCompression: true,
+    }
+    if (netreq.Proxy != ""){
+        urlProxy, err := url.Parse(netreq.Proxy)
+        if err != nil {
+            fmt.Println("urlProxy url.Parse: ", err)
+        }
+        transport.Proxy = http.ProxyURL(urlProxy)
+    }
+    
     file, err := os.Open(netreq.Wordlist)
     if err != nil {
         fmt.Printf("error opening file: %v\n",err)
@@ -70,7 +86,7 @@ func Fuxe(netreq NetRequest) {
     }
     reader := bufio.NewReader(file)
     path, err := Readln(reader)
-    client := &http.Client{}
+    client := &http.Client{ Transport: transport }
     for err == nil {
     
         murl.Path = path
@@ -90,5 +106,34 @@ func Fuxe(netreq NetRequest) {
     
     }
 
+}
+
+func GetBody(netreq NetRequest){
+
+    fixedURL, err := url.Parse(netreq.Proxy)
+    if (err != nil){
+        fmt.Println("proxy not in use ",err)
+    }
+    client := &http.Client{
+        Transport:&http.Transport{
+            Proxy:http.ProxyURL(fixedURL),
+        },
+    }
+    url, _ := url.Parse(netreq.Host)
+    
+    request, err := http.NewRequest("GET", url.String(), nil)
+    if err != nil {
+        log.Println(err)
+    }
+    response, err := client.Do(request)
+    if err != nil {
+        log.Println(err)
+    }
+    data, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        fmt.Println(err)
+    }
+    //printing the response
+    fmt.Println(string(data))
 }
 
