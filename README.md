@@ -12,6 +12,7 @@ TODO:
 - [x] DONE check the connecivity to the url
 - [x] DONE set extension
 - [x] DONE set proxy
+- [x] TODO add support of Tor (not completly)
 - [ ] TODO add read from grepproxylist.sh
 - [ ] TODO set Cookies
 - [ ] TODO generating json file of the result +

@@ -10,6 +10,8 @@ import(
     "log"
     "fmt"
     "os"
+    
+    "golang.org/x/net/proxy"
 )
 
 var urlpath string
@@ -22,6 +24,7 @@ type NetRequest struct{
     Cookie      string
     Ex          []string
     Proxy       string
+    Tor         bool
 }
 
 func CheckConnectivty(host string) (int){
@@ -74,7 +77,9 @@ func Fuxe(netreq NetRequest) {
         }
         transport.Proxy = http.ProxyURL(urlProxy)
     }
-    
+    if netreq.Tor {
+        transport.Dial = ThrowTor().Dial
+    }
     file, err := os.Open(netreq.Wordlist)
     if err != nil {
         fmt.Printf("error opening file: %v\n",err)
@@ -135,5 +140,27 @@ func GetBody(netreq NetRequest){
     }
     //printing the response
     fmt.Println(string(data))
+}
+
+func ThrowTor() proxy.Dialer{
+
+    torurl, _ := url.Parse("socks5://127.0.0.1:9050")
+    dialer, _ := proxy.FromURL(torurl, proxy.Direct)
+    
+    return dialer
+//    transport := &http.Transport{Dial: tbDialer.Dial}
+//    client := &http.Client{Transport: transport}
+//    
+//    resp, err := client.Get("http://check.torproject.org")
+//	if err != nil {
+//		fmt.Println("Failed to issue GET request: %v\n", err)
+//	}
+//	defer resp.Body.Close()
+
+//	fmt.Printf("GET returned: %v\n", resp.Status)
+//	body, err := ioutil.ReadAll(resp.Body)
+//	fmt.Println(string(body))
+//    
+//    
 }
 

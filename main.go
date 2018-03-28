@@ -75,6 +75,7 @@ func main() {
                 Cookie:*cookie,
                 Ex:strings.Split(*ex, ","),
                 Proxy:*proxy,
+                Tor:*tor,
         }
         //core.Fuxe(req)
         core.GetBody(req)
