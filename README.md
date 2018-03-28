@@ -1,4 +1,4 @@
-<p align="center">[![GoDoc](https://godoc.org/github.com/hihebark/godirsearch?status.svg)](https://godoc.org/github.com/hihebark/godirsearch)</p>
+<p align="center"><a href="https://godoc.org/github.com/hihebark/godirsearch"><img src="https://godoc.org/github.com/hihebark/godirsearch?status.svg" alt="GoDoc"></a></p>
 
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
 
