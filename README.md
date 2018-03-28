@@ -1,6 +1,8 @@
+<p align="center">
+[![GoDoc](https://godoc.org/github.com/hihebark/godirsearch?status.svg)](https://godoc.org/github.com/hihebark/godirsearch)
 
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
-
+</p>
 godirsearch
 ===========
 Nothing to see here!
