@@ -148,19 +148,5 @@ func ThrowTor() proxy.Dialer{
     dialer, _ := proxy.FromURL(torurl, proxy.Direct)
     
     return dialer
-//    transport := &http.Transport{Dial: tbDialer.Dial}
-//    client := &http.Client{Transport: transport}
-//    
-//    resp, err := client.Get("http://check.torproject.org")
-//	if err != nil {
-//		fmt.Println("Failed to issue GET request: %v\n", err)
-//	}
-//	defer resp.Body.Close()
-
-//	fmt.Printf("GET returned: %v\n", resp.Status)
-//	body, err := ioutil.ReadAll(resp.Body)
-//	fmt.Println(string(body))
-//    
-//    
 }
 
