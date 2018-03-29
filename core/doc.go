@@ -1,4 +1,4 @@
-//utils: for manupilating file and ...
-//net: for every thing with the network
-//logger just for pretty out
+//utils: for manupilating file and ...\n
+//net: for every thing with the network\n
+//logger just for pretty output\n
 package core
