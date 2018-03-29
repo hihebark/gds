@@ -72,23 +72,16 @@ func Fuxe(netreq NetRequest) {
     }
     if (netreq.Proxy != ""){
         urlProxy, err := url.Parse(netreq.Proxy)
-        if err != nil {
-            fmt.Println("urlProxy url.Parse: ", err)
-        }
+        Printerr(err, "Fuxe:url.Parse")
         transport.Proxy = http.ProxyURL(urlProxy)
     }
     if netreq.Tor {
         transport.Dial = ThrowTor().Dial
     }
     file, err := os.Open(netreq.Wordlist)
-    if err != nil {
-        fmt.Printf("error opening file: %v\n",err)
-        os.Exit(1)
-    }
+    Printerr(err, "Fuxe:os.Open")
     murl, err := url.ParseRequestURI(netreq.Host)
-    if(err != nil){
-        fmt.Println("url.ParseRequestURI:", err)
-    }
+    Printerr(err, "Fuxe:url.ParseRequestURI")
     reader := bufio.NewReader(file)
     path, err := Readln(reader)
     client := &http.Client{ Transport: transport }
@@ -101,7 +94,7 @@ func Fuxe(netreq NetRequest) {
         mstatus, mlength := MakeRequest(urlpath, req, *client)
         fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), urlpath)
         path, err = Readln(reader)
-        if (!strings.HasSuffix(urlpath, "/") && len(netreq.Ex) !=0){
+        if (!strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0){
             for _, ext := range netreq.Ex {
                 req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
                 mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
@@ -116,37 +109,33 @@ func Fuxe(netreq NetRequest) {
 func GetBody(netreq NetRequest){
 
     fixedURL, err := url.Parse(netreq.Proxy)
-    if (err != nil){
-        fmt.Println("proxy not in use ",err)
-    }
+    Printerr(err, "GetBody:url.Parse")
     client := &http.Client{
         Transport:&http.Transport{
             Proxy:http.ProxyURL(fixedURL),
         },
     }
     url, _ := url.Parse(netreq.Host)
-    
     request, err := http.NewRequest("GET", url.String(), nil)
-    if err != nil {
-        log.Println(err)
-    }
+    Printerr(err, "GetBody:http.NewRequest")
     response, err := client.Do(request)
-    if err != nil {
-        log.Println(err)
-    }
+    Printerr(err, "GetBody:client.Do")
     data, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        fmt.Println(err)
-    }
-    //printing the response
+    Printerr(err, "GetBody:ioutil.ReadAll")
     fmt.Println(string(data))
 }
 
 func ThrowTor() proxy.Dialer{
-
-    torurl, _ := url.Parse("socks5://127.0.0.1:9050")
-    dialer, _ := proxy.FromURL(torurl, proxy.Direct)
-    
+    torurl, err := url.Parse("socks5://127.0.0.1:9050")
+    Printerr(err, "ThrowTor:url.Parse")
+    dialer, err := proxy.FromURL(torurl, proxy.Direct)
+    Printerr(err, "ThrowTor:proxy.FromURL")
     return dialer
+}
+
+func Printerr(err error, fromwhere string) {
+    if err != nil {
+        fmt.Printf("%s : %v", fromwhere, err)
+    }
 }
 

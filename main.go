@@ -1,25 +1,12 @@
 package main
 
-/**
-* DONE regex for verifing url
-* DONE check the connecivity to the url
-* TODO set Cookies
-* DONE set extension
-* TODO generating json file of the result +
-* TODO a log file for debbuging
-* TODO use thread
-* TODO why no an UI Just saying
-**/
-
 import (
         "os"
         "fmt"
         "flag"
-//        "bufio"
         "regexp"
         "strings"
-//        "net/url"
-//        "net/http"
+        
         "github.com/hihebark/godirsearch/core"
 )
 
@@ -33,7 +20,7 @@ var (
 
 func init(){
 
-    ex          = flag.String("ex", "", "separate with coma like php,txt ...")
+    ex          = flag.String("ex", "txt", "separate with coma like php,txt ...")
     tor         = flag.Bool("tor", false, "Brutforce using Tor")
     host        = flag.String("host", "", "Host to brutforce")
     proxy       = flag.String("proxy", "", "Use a proxy to brutforce")
@@ -77,8 +64,8 @@ func main() {
                 Proxy:*proxy,
                 Tor:*tor,
         }
-        //core.Fuxe(req)
-        core.GetBody(req)
+        core.Fuxe(req)
+        //core.GetBody(req)
     
     } else {
         fmt.Println("\033[91mHost not recheable status:\033[0m", status)

@@ -1,11 +1,14 @@
+//Utils
 package core
 
 import (
     "io"
     "os"
+    "log"
     "fmt"
     "bytes"
     "bufio"
+    "os/exec"
 )
 
 func CountLine(r io.Reader) (int, error) {
@@ -26,19 +29,20 @@ func CountLine(r io.Reader) (int, error) {
         }
     }
 }
+
 func ReadFromFile(filePath string){
 
     file, err := os.Open(filePath)
     if err != nil {
-        fmt.Println(err.Error() + `: ` + filePath)
+        log.Fatalln(err.Error() + `: ` + filePath)
         return
     } else {
         defer file.Close()
     }
     scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanLines)       
+    scanner.Split(bufio.ScanLines)
     for scanner.Scan() {
-        fmt.Println(scanner.Text()) // the line
+        fmt.Println(scanner.Text())
     }
 
 }
@@ -54,5 +58,19 @@ func Readln(r *bufio.Reader) (string, error) {
         ln = append(ln, line...)
     }
     return string(ln),err
+
+}
+
+func Execute (pathExec string, args []string) (string, error) {
+
+    path, err := exec.LookPath(pathExec)
+    if err != nil {
+        return "", err
+    }
+    cmd, err := exec.Command(path, args...).CombinedOutput()
+    if err != nil {
+        return "", err
+    }
+    return string(cmd), nil
 
 }

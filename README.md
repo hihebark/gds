@@ -14,7 +14,7 @@ TODO:
 - [x] DONE set extension
 - [x] DONE set proxy
 - [x] TODO add support of Tor (not completly)
-- [ ] TODO add read from grepproxylist.sh
+- [x] TODO add read from grepproxylist.sh
 - [ ] TODO set Cookies
 - [ ] TODO generating json file of the result +
 - [ ] TODO a log file for debbuging

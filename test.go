@@ -1,9 +1,8 @@
 package main
 
 import (
-    //"fmt"
+    "fmt"
     "github.com/hihebark/godirsearch/core"
-    "net/http"
 )
 
 func main(){
@@ -17,5 +16,10 @@ func main(){
     /*Tor 
     transport := &http.Transport{}
     transport.Dial = core.ThrowTor().Dial
+    */
+    /*excute shell script 
+    s, err := core.Execute("/bin/bash", []string{"core/grepproxylist.sh"})
+    core.Printerr(err, "test:core.Execute")
+    fmt.Println(strings.Split(s, "\n"))
     */
 }
