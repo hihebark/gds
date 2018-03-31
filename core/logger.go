@@ -2,59 +2,59 @@ package core
 
 import "fmt"
 
-const {
-    reset           = "\033[0m"
-    start           = "\033[%sm"
-    Orange          = "33"
-    Green           = "32"
-    Lightgreen      = "92"
-    Grey            = "37"
-    Black           = "30"
-    Red             = "31"
-    Lightred        = "91"
-    Cyan            = "36"
-    Lightcyan       = "96"
-    Blue            = "34"
-    Lightblue       = "94"
-    Purple          = "35"
-    Yellow          = "93"
-    White           = "97"
-    Lightpurple     = "95"
+const (
+    RESET           = "\033[0m"
+    START           = "\033[%sm"
+    ORANGE          = "33"
+    GREEN           = "32"
+    LIGHTGREEN      = "92"
+    GREY            = "37"
+    BLACK           = "30"
+    RED             = "31"
+    LIGHTRED        = "91"
+    CYAN            = "36"
+    LIGHTCYAN       = "96"
+    BLUE            = "34"
+    LIGHTBLUE       = "94"
+    PURPLE          = "35"
+    YELLOW          = "93"
+    WHITE           = "97"
+    LIGHTPURPLE     = "95"
     
-    info    = "[!] "
-    que     = "[?] "
-    bad     = "[-] "
-    good    = "[+] "
-    run     = "[~] "
+    INFO    = "[!] "
+    QUE     = "[?] "
+    BAD     = "[-] "
+    GOOD    = "[+] "
+    RUN     = "[~] "
 
-    bg      = ";7"
-    bold    = ";1"
-    italic  = "3"
-    under   = "4"
-    strike  = "09"
-}
+    BG      = ";7"
+    BOLD    = ";1"
+    ITALIC  = "3"
+    UNDER   = "4"
+    STRIKE  = "09"
+)
 
 func Say(color, message string) string{
-    return fmt.Sprintf(start, color)+message+reset
+    return fmt.Sprintf(START, color)+message+RESET
 }
 
 func Info(message string) string{
-    return fmt.Sprintf(start, Orange)+info+message+reset
+    return fmt.Sprintf(START, ORANGE)+INFO+message+RESET
 }
 
 func Que(message string) string{
-    return fmt.Sprintf(start, Lightblue)+que+message+reset
+    return fmt.Sprintf(START, LIGHTBLUE)+QUE+message+RESET
 }
 
 func Bad(message string) string{
-    return fmt.Sprintf(start, Lightred)+bad+message+reset
+    return fmt.Sprintf(START, LIGHTRED)+BAD+message+RESET
 }
 
 func Good(message string) string{
-    return fmt.Sprintf(start, Lightgreen)+good+message+reset
+    return fmt.Sprintf(START, LIGHTGREEN)+GOOD+message+RESET
 }
 
 func Run(message string) string{
-    return fmt.Sprintf(start, White)+run+message+reset
+    return fmt.Sprintf(START, WHITE)+RUN+message+RESET
 }
 
