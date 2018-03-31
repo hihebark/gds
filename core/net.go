@@ -125,6 +125,7 @@ func GetBody(netreq NetRequest) {
 	fmt.Println(string(data))
 }
 
+//activate the the app to go throw Tor
 func ThrowTor() proxy.Dialer {
 	torurl, err := url.Parse("socks5://127.0.0.1:9050")
 	Printerr(err, "ThrowTor:url.Parse")

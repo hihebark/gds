@@ -1,4 +1,3 @@
-//Utils
 package core
 
 import (
@@ -37,7 +36,7 @@ func ReadFromFile(filePath string) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatalln(err.Error() + `: ` + filePath)
-		return
+		os.Exit(1)
 	} else {
 		defer file.Close()
 	}
@@ -48,12 +47,12 @@ func ReadFromFile(filePath string) {
 	}
 
 }
-
+//read file line
 func Readln(r *bufio.Reader) (string, error) {
 
 	var (
-		isPrefix bool  = true
-		err      error = nil
+		isPrefix = true
+		err error
 		line, ln []byte
 	)
 	for isPrefix && err == nil {
@@ -64,7 +63,7 @@ func Readln(r *bufio.Reader) (string, error) {
 
 }
 
-//excute a commande basicly used to excute grepproxylist.sh
+//excute a commande basically used to excute grepproxylist.sh
 func Execute(pathExec string, args []string) (string, error) {
 
 	path, err := exec.LookPath(pathExec)

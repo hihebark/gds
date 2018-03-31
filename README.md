@@ -1,6 +1,11 @@
-<p align="center"><a href="https://godoc.org/github.com/hihebark/godirsearch"><img src="https://godoc.org/github.com/hihebark/godirsearch?status.svg" alt="GoDoc"></a></p>
-
-<p align="center"><a href="https://goreportcard.com/badge/github.com/hihebark/godirsearch"><img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard"></a></p>
+<p align="center">
+    <a href="https://godoc.org/github.com/hihebark/godirsearch">
+        <img src="https://godoc.org/github.com/hihebark/godirsearch?status.svg" alt="GoDoc">
+    </a>
+    <a href="https://goreportcard.com/badge/github.com/hihebark/godirsearch">
+        <img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard">
+    </a>
+</p>
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
 
 godirsearch

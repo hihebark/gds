@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-
 	/*Proxy test
 	  req := core.NetRequest{
 	              Host:"http://httpbin.org/get",
