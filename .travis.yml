@@ -1,0 +1,9 @@
+language: go
+
+go:
+  - "1.x"
+before_install:
+  - go get -v golang.org/x/net/proxy
+script:
+  - cd GOPATH/src/github.com/hihebark/godirsearch
+  - go run main.go --help
