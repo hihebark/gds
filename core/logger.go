@@ -43,18 +43,22 @@ func Say(color, message string) string {
 func Info(message string) string {
 	return fmt.Sprintf(START, ORANGE) + INFO + message + RESET
 }
+
 //Que: to show output with blue color
 func Que(message string) string {
 	return fmt.Sprintf(START, LIGHTBLUE) + QUE + message + RESET
 }
+
 //Bad: to show output with red color
 func Bad(message string) string {
 	return fmt.Sprintf(START, LIGHTRED) + BAD + message + RESET
 }
+
 //Info: to show output with green color
 func Good(message string) string {
 	return fmt.Sprintf(START, LIGHTGREEN) + GOOD + message + RESET
 }
+
 //Run: to show output with white color
 func Run(message string) string {
 	return fmt.Sprintf(START, WHITE) + RUN + message + RESET

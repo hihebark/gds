@@ -47,12 +47,13 @@ func ReadFromFile(filePath string) {
 	}
 
 }
+
 //read file line
 func Readln(r *bufio.Reader) (string, error) {
 
 	var (
 		isPrefix = true
-		err error
+		err      error
 		line, ln []byte
 	)
 	for isPrefix && err == nil {
