@@ -8,7 +8,6 @@
     <a href="https://travis-ci.org/hihebark/godirsearch.svg?branch=master">
         <img src="https://travis-ci.org/hihebark/godirsearch.svg?branch=master" alt="travis">
     </a>
-    https://travis-ci.org/hihebark/godirsearch.svg?branch=master
 </p>
 
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
