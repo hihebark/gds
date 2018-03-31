@@ -5,6 +5,10 @@
     <a href="https://goreportcard.com/badge/github.com/hihebark/godirsearch">
         <img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard">
     </a>
+    <a href="https://travis-ci.org/hihebark/godirsearch.svg?branch=master">
+        <img src="https://travis-ci.org/hihebark/godirsearch.svg?branch=master" alt="travis">
+    </a>
+    https://travis-ci.org/hihebark/godirsearch.svg?branch=master
 </p>
 
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
