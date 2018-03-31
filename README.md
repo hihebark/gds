@@ -6,6 +6,7 @@
         <img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard">
     </a>
 </p>
+
 ![Golang gopher](https://golang.org/doc/gopher/pkg.png)
 
 godirsearch
