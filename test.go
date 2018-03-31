@@ -4,8 +4,8 @@ import (
 	"fmt"
 	//"github.com/hihebark/godirsearch/core"
 )
-
-func main() {
+//SayTest say test
+func SayTest() {
 	fmt.Println("Just for Testing...")
 	/*Proxy test
 	  req := core.NetRequest{
