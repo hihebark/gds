@@ -2,16 +2,7 @@ package core
 
 import "fmt"
 
-var (
-    Green, Lightgreen, Grey, Black, Red, Lightred, Cyan, Lightcyan, Blue,
-    Lightblue, Purple, Yellow, White, Lightpurple, Orange, reset, start string
-    
-    info, que, bad, good, run string
-    
-    bg, bold, italic, under, strike string
-)
-
-func init(){
+const {
     reset           = "\033[0m"
     start           = "\033[%sm"
     Orange          = "33"
