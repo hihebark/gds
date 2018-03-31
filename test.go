@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/hihebark/godirsearch/core"
+	//"github.com/hihebark/godirsearch/core"
 )
 
 func main() {
+	fmt.Println("Just for Testing...")
 	/*Proxy test
 	  req := core.NetRequest{
 	              Host:"http://httpbin.org/get",
@@ -22,4 +23,3 @@ func main() {
 	  fmt.Println(strings.Split(s, "\n"))
 	*/
 }
-

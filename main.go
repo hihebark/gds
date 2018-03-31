@@ -10,7 +10,7 @@ import (
 	"github.com/hihebark/godirsearch/core"
 )
 
-const version string = "0.0.2"
+const version string = "0.1.0"
 
 var (
 	tor                                                     *bool

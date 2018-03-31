@@ -10,7 +10,7 @@ import (
 	"os/exec"
 )
 
-// Count the number of line in a wordlist to determine how much we will brutforce
+//CountLine Count the number of line in a wordlist to determine how much we will brutforce.
 func CountLine(r io.Reader) (int, error) {
 	buf := make([]byte, 32*1024)
 	count := 0
@@ -30,7 +30,7 @@ func CountLine(r io.Reader) (int, error) {
 	}
 }
 
-//Read from a file: this will read the content of file if -proxyfile is provided
+//ReadFromFile this will read the content of file if -proxyfile is provided.
 func ReadFromFile(filePath string) {
 
 	file, err := os.Open(filePath)
@@ -48,7 +48,7 @@ func ReadFromFile(filePath string) {
 
 }
 
-//read file line
+//Readln file line per line.
 func Readln(r *bufio.Reader) (string, error) {
 
 	var (
@@ -64,7 +64,7 @@ func Readln(r *bufio.Reader) (string, error) {
 
 }
 
-//excute a commande basically used to excute grepproxylist.sh
+//Execute a commande basically used to excute grepproxylist.sh .
 func Execute(pathExec string, args []string) (string, error) {
 
 	path, err := exec.LookPath(pathExec)
@@ -78,4 +78,3 @@ func Execute(pathExec string, args []string) (string, error) {
 	return string(cmd), nil
 
 }
-

@@ -2,8 +2,9 @@ package core
 
 import "fmt"
 
+//all the const are defined for what thay do!
 const (
-	RESET       = "\033[0m" //all the const are defined for what thay do!
+	RESET       = "\033[0m"
 	START       = "\033[%sm"
 	ORANGE      = "33"
 	GREEN       = "32"
@@ -34,32 +35,32 @@ const (
 	STRIKE = "09"
 )
 
-//Say: will output a message with the defined color
+//Say will output a message with the defined color.
 func Say(color, message string) string {
 	return fmt.Sprintf(START, color) + message + RESET
 }
 
-//Info: to show output with orange color
+//Info to show output with orange color.
 func Info(message string) string {
 	return fmt.Sprintf(START, ORANGE) + INFO + message + RESET
 }
 
-//Que: to show output with blue color
+//Que to show output with blue color.
 func Que(message string) string {
 	return fmt.Sprintf(START, LIGHTBLUE) + QUE + message + RESET
 }
 
-//Bad: to show output with red color
+//Bad to show output with red color.
 func Bad(message string) string {
 	return fmt.Sprintf(START, LIGHTRED) + BAD + message + RESET
 }
 
-//Info: to show output with green color
+//Good to show output with green color.
 func Good(message string) string {
 	return fmt.Sprintf(START, LIGHTGREEN) + GOOD + message + RESET
 }
 
-//Run: to show output with white color
+//Run to show output with white color.
 func Run(message string) string {
 	return fmt.Sprintf(START, WHITE) + RUN + message + RESET
 }

@@ -16,6 +16,7 @@ import (
 
 var urlpath string
 
+//NetRequest for Request data.
 type NetRequest struct {
 	Host      string
 	Proxyfile string
@@ -27,6 +28,7 @@ type NetRequest struct {
 	Tor       bool
 }
 
+//CheckConnectivty check if the provided host is up or not.
 func CheckConnectivty(host string) int {
 
 	resp, err := http.Get(host)
@@ -38,6 +40,7 @@ func CheckConnectivty(host string) int {
 
 }
 
+//MakeRequest to make request and return status, content-length
 func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
 
 	resp, err := client.Do(req)
@@ -49,6 +52,7 @@ func MakeRequest(host string, req *http.Request, client http.Client) (int, int64
 
 }
 
+//ByteConverter convert length to bytes, KB, MB, GB, TB.
 func ByteConverter(length int64) string {
 	mbyte := []string{"bytes", "KB", "MB", "GB", "TB"}
 	if length == -1 {
@@ -63,6 +67,7 @@ func ByteConverter(length int64) string {
 	return ""
 }
 
+//Fuxe to brute force the host
 func Fuxe(netreq NetRequest) {
 
 	transport := &http.Transport{
@@ -106,6 +111,7 @@ func Fuxe(netreq NetRequest) {
 
 }
 
+//GetBody fetch the body
 func GetBody(netreq NetRequest) {
 
 	fixedURL, err := url.Parse(netreq.Proxy)
@@ -125,7 +131,7 @@ func GetBody(netreq NetRequest) {
 	fmt.Println(string(data))
 }
 
-//activate the the app to go throw Tor
+//ThrowTor activate the the app to go throw Tor
 func ThrowTor() proxy.Dialer {
 	torurl, err := url.Parse("socks5://127.0.0.1:9050")
 	Printerr(err, "ThrowTor:url.Parse")
@@ -134,9 +140,9 @@ func ThrowTor() proxy.Dialer {
 	return dialer
 }
 
+//Printerr print error message
 func Printerr(err error, fromwhere string) {
 	if err != nil {
 		fmt.Printf("%s : %v", fromwhere, err)
 	}
 }
-
