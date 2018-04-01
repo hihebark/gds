@@ -2,11 +2,32 @@ package main
 
 import (
 	"fmt"
-	//"github.com/hihebark/godirsearch/core"
+	"github.com/hihebark/godirsearch/core"
+	"net/http"
+	"net/url"
+	"sync"
 )
+
 //SayTest say test
 func SayTest() {
 	fmt.Println("Just for Testing...")
+	line := core.ReadFromFile("test.txt")
+	var waitg sync.WaitGroup
+	host := "http://ouedkniss.com/"
+	waitg.Add(len(line))
+	murl, _ := url.ParseRequestURI(host)
+	client := &http.Client{}
+	for i := 0; i < len(line); i++ {
+		go func(i int) {
+			defer waitg.Done()
+			murl.Path = line[i]
+			urlpath := murl.String()
+			req, _ := http.NewRequest("GET", urlpath, nil)
+			status, length := core.MakeRequest(urlpath, req, *client)
+			fmt.Printf("status: %d\t-\tlength: %d\n", status, length)
+		}(i)
+	}
+	waitg.Wait()
 	/*Proxy test
 	  req := core.NetRequest{
 	              Host:"http://httpbin.org/get",

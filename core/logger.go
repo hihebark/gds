@@ -2,7 +2,7 @@ package core
 
 import "fmt"
 
-//all the const are defined for what thay do!
+//All the const are defined for what they do!
 const (
 	RESET       = "\033[0m"
 	START       = "\033[%sm"
@@ -36,31 +36,31 @@ const (
 )
 
 //Say will output a message with the defined color.
-func Say(color, message string) string {
-	return fmt.Sprintf(START, color) + message + RESET
+func Say(color, message string) {
+	fmt.Printf("%s%s%s\n", fmt.Sprintf(START, color), message, RESET)
 }
 
 //Info to show output with orange color.
-func Info(message string) string {
-	return fmt.Sprintf(START, ORANGE) + INFO + message + RESET
+func Info(message string) {
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, ORANGE), INFO, message, RESET)
 }
 
 //Que to show output with blue color.
-func Que(message string) string {
-	return fmt.Sprintf(START, LIGHTBLUE) + QUE + message + RESET
+func Que(message string) {
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, LIGHTBLUE), QUE, message, RESET)
 }
 
 //Bad to show output with red color.
-func Bad(message string) string {
-	return fmt.Sprintf(START, LIGHTRED) + BAD + message + RESET
+func Bad(message string) {
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, LIGHTRED), BAD, message, RESET)
 }
 
 //Good to show output with green color.
-func Good(message string) string {
-	return fmt.Sprintf(START, LIGHTGREEN) + GOOD + message + RESET
+func Good(message string) {
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, LIGHTGREEN), GOOD, message, RESET)
 }
 
 //Run to show output with white color.
-func Run(message string) string {
-	return fmt.Sprintf(START, WHITE) + RUN + message + RESET
+func Run(message string) {
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, WHITE), RUN, message, RESET)
 }
