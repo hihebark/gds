@@ -84,7 +84,7 @@ func Fuxe(netreq NetRequest) {
 		transport.Dial = ThrowTor().Dial
 	}
 	file, err := os.Open(netreq.Wordlist)
-	Printerr(err, Bad("Fuxe:os.Open"))
+	Printerr(err, "Fuxe:os.Open")
 	murl, err := url.ParseRequestURI(netreq.Host)
 	Printerr(err, "Fuxe:url.ParseRequestURI")
 	reader := bufio.NewReader(file)
@@ -99,11 +99,11 @@ func Fuxe(netreq NetRequest) {
 		mstatus, mlength := MakeRequest(urlpath, req, *client)
 		switch {
 		case mstatus >= 200 && mstatus < 299:
-			fmt.Println(Say(GREEN, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+			Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 		case mstatus >= 300 && mstatus < 399:
-			fmt.Println(Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+			Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 		case mstatus >= 400 && mstatus < 500:
-			fmt.Println(Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+			Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 		}
 		path, err = Readln(reader)
 		if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
@@ -112,11 +112,11 @@ func Fuxe(netreq NetRequest) {
 				mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
 				switch {
 				case mstatus >= 200 && mstatus < 299:
-					fmt.Println(Say(GREEN, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+					Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 				case mstatus >= 300 && mstatus < 399:
-					fmt.Println(Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+					Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 				case mstatus >= 400 && mstatus < 500:
-					fmt.Println(Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+					Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
 				}
 			}
 		}

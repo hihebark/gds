@@ -3,7 +3,7 @@ package core
 import (
 	"bufio"
 	"bytes"
-	"fmt"
+	//"fmt"
 	"io"
 	"log"
 	"os"
@@ -31,8 +31,9 @@ func CountLine(r io.Reader) (int, error) {
 }
 
 //ReadFromFile this will read the content of file if -proxyfile is provided.
-func ReadFromFile(filePath string) {
+func ReadFromFile(filePath string) []string{
 
+	var line []string
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatalln(err.Error() + `: ` + filePath)
@@ -43,8 +44,10 @@ func ReadFromFile(filePath string) {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		line = append(line, scanner.Text())
+		//fmt.Println(scanner.Text())
 	}
+	return line
 
 }
 

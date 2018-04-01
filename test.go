@@ -2,11 +2,22 @@ package main
 
 import (
 	"fmt"
-	//"github.com/hihebark/godirsearch/core"
+	"sync"
+	"github.com/hihebark/godirsearch/core"
 )
 //SayTest say test
-func SayTest() {
+func main() {
 	fmt.Println("Just for Testing...")
+	line := core.ReadFromFile("test.txt")
+	var waitg sync.WaitGroup
+	waitg.Add(len(line))
+	for i := 0; i < len(line); i++ {
+		go func(i int) {
+			defer waitg.Done()
+			fmt.Printf("%d path: %s\n", i, line[i])
+		}(i)
+	}
+	waitg.Wait()
 	/*Proxy test
 	  req := core.NetRequest{
 	              Host:"http://httpbin.org/get",

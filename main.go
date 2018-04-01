@@ -10,7 +10,7 @@ import (
 	"github.com/hihebark/godirsearch/core"
 )
 
-const version string = "0.1.0"
+const version string = "0.1.1"
 
 var (
 	tor                                                     *bool
@@ -37,7 +37,7 @@ func main() {
 	fmt.Printf("\tGoDirSearch \033[92m~%s\n\033[0m", version)
 	flag.Parse()
 	if *host == "" {
-		fmt.Println(core.Que("No host argument found! add -host http://examples.com/"))
+		core.Que("No host argument found! add -host http://examples.com/")
 		os.Exit(0)
 	}
 
@@ -53,7 +53,7 @@ func main() {
 		if !strings.HasSuffix(*host, "/") {
 			*host += "/"
 		}
-		fmt.Println(core.Run("Connection to the target Ok!"))
+		core.Run("Connection to the target Ok!")
 		req := core.NetRequest{
 			Host:      *host,
 			Proxyfile: *proxyfile,
@@ -68,7 +68,7 @@ func main() {
 		//core.GetBody(req)
 
 	} else {
-		fmt.Println(core.Bad("Host not recheable status: "), status)
+		core.Bad(fmt.Sprintf("Host not recheable status: %s", status))
 	}
 
 }
