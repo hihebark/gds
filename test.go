@@ -2,19 +2,29 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"github.com/hihebark/godirsearch/core"
+	"net/http"
+	"net/url"
+	"sync"
 )
+
 //SayTest say test
 func main() {
 	fmt.Println("Just for Testing...")
 	line := core.ReadFromFile("test.txt")
 	var waitg sync.WaitGroup
+	host := "http://ouedkniss.com/"
 	waitg.Add(len(line))
+	murl, _ := url.ParseRequestURI(host)
+	client := &http.Client{}
 	for i := 0; i < len(line); i++ {
 		go func(i int) {
 			defer waitg.Done()
-			fmt.Printf("%d path: %s\n", i, line[i])
+			murl.Path = line[i]
+			urlpath := murl.String()
+			req, _ := http.NewRequest("GET", urlpath, nil)
+			status, length := core.MakeRequest(urlpath, req, *client)
+			fmt.Printf("status: %d\t-\tlength: %d\n", status, length)
 		}(i)
 	}
 	waitg.Wait()

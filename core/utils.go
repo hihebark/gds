@@ -31,7 +31,7 @@ func CountLine(r io.Reader) (int, error) {
 }
 
 //ReadFromFile this will read the content of file if -proxyfile is provided.
-func ReadFromFile(filePath string) []string{
+func ReadFromFile(filePath string) []string {
 
 	var line []string
 	file, err := os.Open(filePath)

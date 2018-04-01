@@ -23,22 +23,25 @@ TODO:
 - [x] DONE check the connecivity to the url
 - [x] DONE set extension
 - [x] DONE set proxy
-- [x] DONE add support of Tor (not completly)
-- [x] DONE add read from grepproxylist.sh
+- [x] DONE add support of Tor
+- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy)
+- [x] DONE use thread
 - [ ] TODO set Cookies
-- [ ] TODO generating json file of the result +
+- [ ] TODO random useragent if not set
+- [ ] TODO generating json file of the result + (forget the idea)
 - [ ] TODO a log file for debbuging
-- [ ] TODO use thread
 - [ ] TODO why no an UI Just saying
 
 Usage:
 ------
 
 ```
-	GoDirSearch ~0.0.2
+	GoDirSearch ~0.1.1
 Usage of GoDirSearch:
   -cookie string
     	cookie
+  -ex string
+    	separate with coma like php,txt ... (default "txt")
   -host string
     	Host to brutforce
   -proxy string

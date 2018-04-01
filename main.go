@@ -65,8 +65,6 @@ func main() {
 			Tor:       *tor,
 		}
 		core.Fuxe(req)
-		//core.GetBody(req)
-
 	} else {
 		core.Bad(fmt.Sprintf("Host not recheable status: %s", status))
 	}

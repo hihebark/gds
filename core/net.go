@@ -1,7 +1,6 @@
 package core
 
 import (
-	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,12 +8,13 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"golang.org/x/net/proxy"
 )
 
-var urlpath string
+var waitg sync.WaitGroup
 
 //NetRequest for Request data.
 type NetRequest struct {
@@ -83,46 +83,58 @@ func Fuxe(netreq NetRequest) {
 	if netreq.Tor {
 		transport.Dial = ThrowTor().Dial
 	}
-	file, err := os.Open(netreq.Wordlist)
-	Printerr(err, "Fuxe:os.Open")
-	murl, err := url.ParseRequestURI(netreq.Host)
-	Printerr(err, "Fuxe:url.ParseRequestURI")
-	reader := bufio.NewReader(file)
-	path, err := Readln(reader)
-	client := &http.Client{Transport: transport}
-	for err == nil {
 
-		murl.Path = path
-		urlpath = murl.String()
-		req, _ := http.NewRequest("GET", urlpath, nil)
-		req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
-		mstatus, mlength := MakeRequest(urlpath, req, *client)
-		switch {
-		case mstatus >= 200 && mstatus < 299:
-			Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
-		case mstatus >= 300 && mstatus < 399:
-			Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
-		case mstatus >= 400 && mstatus < 500:
-			Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
-		}
-		path, err = Readln(reader)
-		if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
-			for _, ext := range netreq.Ex {
-				req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
-				mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
-				switch {
-				case mstatus >= 200 && mstatus < 299:
-					Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
-				case mstatus >= 300 && mstatus < 399:
-					Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
-				case mstatus >= 400 && mstatus < 500:
-					Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s", mstatus, ByteConverter(mlength), urlpath))
+	allPath := ReadFromFile(netreq.Wordlist)
+	if len(allPath) == 0 {
+		Bad("the file is empty!")
+		os.Exit(1)
+	}
+	Info(fmt.Sprintf("File count: %d", len(allPath)))
+	waitg.Add(len(allPath))
+	murl, _ := url.ParseRequestURI(netreq.Host)
+	client := &http.Client{Transport: transport}
+	for i := 0; i < len(allPath); i++ {
+
+		go func(i int) {
+
+			defer waitg.Done()
+			murl.Path = allPath[i]
+			urlpath := murl.String()
+			req, _ := http.NewRequest("GET", urlpath, nil)
+			req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
+			status, length := MakeRequest(urlpath, req, *client)
+
+			switch {
+			case status >= 200 && status < 299:
+				Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s",
+					status, ByteConverter(length), urlpath))
+			case status >= 300 && status < 399:
+				Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s",
+					status, ByteConverter(length), urlpath))
+			case status >= 400 && status < 500:
+				Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s",
+					status, ByteConverter(length), urlpath))
+			}
+			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
+				for _, ext := range netreq.Ex {
+					req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
+					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
+					switch {
+					case mstatus >= 200 && mstatus < 299:
+						Say(GREEN, fmt.Sprintf("# Status: %d - %s\t\t%s",
+							mstatus, ByteConverter(mlength), urlpath))
+					case mstatus >= 300 && mstatus < 399:
+						Say(LIGHTRED, fmt.Sprintf("# Status: %d - %s\t\t%s",
+							mstatus, ByteConverter(mlength), urlpath))
+					case mstatus >= 400 && mstatus < 500:
+						Say(ORANGE, fmt.Sprintf("# Status: %d - %s\t\t%s",
+							mstatus, ByteConverter(mlength), urlpath))
+					}
 				}
 			}
-		}
-
+		}(i)
 	}
-
+	waitg.Wait()
 }
 
 //GetBody fetch the body
