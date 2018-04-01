@@ -11,6 +11,7 @@ import (
 )
 
 const version string = "0.1.1"
+const LOGO string = " █▀▀▀▀▄\n █ ■■ █\n █▄▄▄▄█\n"
 
 var (
 	tor                                                     *bool
@@ -34,7 +35,7 @@ func init() {
 
 func main() {
 
-	fmt.Printf("\tGoDirSearch \033[92m~%s\n\033[0m", version)
+	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", core.SayMe(core.LIGHTRED, LOGO), version)
 	flag.Parse()
 	if *host == "" {
 		core.Que("No host argument found! add -host http://examples.com/")

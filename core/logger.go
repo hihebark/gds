@@ -40,6 +40,11 @@ func Say(color, message string) {
 	fmt.Printf("%s%s%s\n", fmt.Sprintf(START, color), message, RESET)
 }
 
+//SayMe will return a message with the defined color.
+func SayMe(color, message string) string {
+	return fmt.Sprintf(START, color)+message+RESET
+}
+
 //Info to show output with orange color.
 func Info(message string) {
 	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, ORANGE), INFO, message, RESET)
