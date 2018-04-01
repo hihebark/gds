@@ -2,7 +2,7 @@
     <a href="https://godoc.org/github.com/hihebark/godirsearch">
         <img src="https://godoc.org/github.com/hihebark/godirsearch?status.svg" alt="GoDoc">
     </a>
-    <a href="https://goreportcard.com/badge/github.com/hihebark/godirsearch">
+    <a href="https://goreportcard.com/report/github.com/hihebark/godirsearch">
         <img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard">
     </a>
     <a href="https://travis-ci.org/hihebark/godirsearch.svg?branch=master">
