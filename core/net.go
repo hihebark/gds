@@ -84,7 +84,7 @@ func Fuxe(netreq NetRequest) {
 		transport.Dial = ThrowTor().Dial
 	}
 	file, err := os.Open(netreq.Wordlist)
-	Printerr(err, "Fuxe:os.Open")
+	Printerr(err, Bad("Fuxe:os.Open"))
 	murl, err := url.ParseRequestURI(netreq.Host)
 	Printerr(err, "Fuxe:url.ParseRequestURI")
 	reader := bufio.NewReader(file)
@@ -97,13 +97,27 @@ func Fuxe(netreq NetRequest) {
 		req, _ := http.NewRequest("GET", urlpath, nil)
 		req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
 		mstatus, mlength := MakeRequest(urlpath, req, *client)
-		fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), urlpath)
+		switch {
+		case mstatus >= 200 && mstatus < 299:
+			fmt.Println(Say(GREEN, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+		case mstatus >= 300 && mstatus < 399:
+			fmt.Println(Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+		case mstatus >= 400 && mstatus < 500:
+			fmt.Println(Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+		}
 		path, err = Readln(reader)
 		if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
 			for _, ext := range netreq.Ex {
 				req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
 				mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
-				fmt.Printf("Status: %d - %s\t\tPath: %s\n", mstatus, ByteConverter(mlength), urlpath+"."+ext)
+				switch {
+				case mstatus >= 200 && mstatus < 299:
+					fmt.Println(Say(GREEN, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+				case mstatus >= 300 && mstatus < 399:
+					fmt.Println(Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+				case mstatus >= 400 && mstatus < 500:
+					fmt.Println(Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\tPath: %s", mstatus, ByteConverter(mlength), urlpath)))
+				}
 			}
 		}
 
@@ -143,6 +157,6 @@ func ThrowTor() proxy.Dialer {
 //Printerr print error message
 func Printerr(err error, fromwhere string) {
 	if err != nil {
-		fmt.Printf("%s : %v", fromwhere, err)
+		Bad(fmt.Sprintf("%s : %v", fromwhere, err))
 	}
 }
