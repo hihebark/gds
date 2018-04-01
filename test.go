@@ -9,7 +9,7 @@ import (
 )
 
 //SayTest say test
-func main() {
+func SayTest() {
 	fmt.Println("Just for Testing...")
 	line := core.ReadFromFile("test.txt")
 	var waitg sync.WaitGroup
