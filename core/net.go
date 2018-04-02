@@ -1,20 +1,22 @@
 package core
 
 import (
-	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"net/url"
 	"os"
-	"strings"
+	"fmt"
+	"log"
 	"sync"
 	"time"
+	"strings"
+	"net/url"
+	"net/http"
+	"io/ioutil"
 
 	"golang.org/x/net/proxy"
 )
 
-var waitg sync.WaitGroup
+var(
+	waitg sync.WaitGroup
+)
 
 //NetRequest for Request data.
 type NetRequest struct {
@@ -41,11 +43,11 @@ func CheckConnectivty(host string) int {
 }
 
 //MakeRequest to make request and return status, content-length
-func MakeRequest(host string, req *http.Request, client http.Client, netreq NetRequest) (int, int64) {
+func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
 
-	if netreq.Cookie != "" {
-		req.Header.Set("Cookie", netreq.Cookie)
-	}
+//	if netreq.Cookie != "" {
+//		req.Header.Set("Cookie", netreq.Cookie)
+//	}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln("MakeRequest: ", err, host)
@@ -91,10 +93,17 @@ func Fuxe(netreq NetRequest) {
 		Bad("the file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("File count: %d", len(allPath)))
+	Info(fmt.Sprintf("File count: %d\n", len(allPath)))
 	waitg.Add(len(allPath))
 	murl, _ := url.ParseRequestURI(netreq.Host)
-	client := &http.Client{Transport: transport}
+	client := &http.Client{ Transport : transport }
+	req := &http.Request{
+		Method:"GET",
+		Header:map[string][]string{
+			"Cookie":[]string{netreq.Cookie},
+			"User-Agent":[]string{netreq.UserAgent},
+		},
+	}
 	for i := 0; i < len(allPath); i++ {
 
 		go func(i int) {
@@ -102,9 +111,9 @@ func Fuxe(netreq NetRequest) {
 			defer waitg.Done()
 			murl.Path = allPath[i]
 			urlpath := murl.String()
-			req, _ := http.NewRequest("GET", urlpath, nil)
-			req.Header.Set("User-Agent", netreq.UserAgent)
-			status, length := MakeRequest(urlpath, req, *client, netreq)
+			req.URL = murl
+			//req.Header.Add("User-Agent", netreq.UserAgent)
+			status, length := MakeRequest(urlpath, req, *client)
 
 			switch {
 			case status >= 200 && status < 299:
@@ -120,7 +129,7 @@ func Fuxe(netreq NetRequest) {
 			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
 				for _, ext := range netreq.Ex {
 					req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
-					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client, netreq)
+					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
 					switch {
 					case mstatus >= 200 && mstatus < 299:
 						Say(GREEN, fmt.Sprintf("# Status: %d - %s\t\t%s",
@@ -142,13 +151,6 @@ func Fuxe(netreq NetRequest) {
 //GetBody fetch the body
 func GetBody(netreq NetRequest) {
 
-	//fixedURL, err := url.Parse(netreq.Proxy)
-	//Printerr(err, "GetBody:url.Parse")
-//	client := &http.Client{
-//		Transport: &http.Transport{
-//			Proxy: http.ProxyURL(fixedURL),
-//		},
-//	}
 	client := &http.Client{}
 	url, _ := url.Parse(netreq.Host)
 	request, err := http.NewRequest("GET", url.String(), nil)
@@ -171,9 +173,3 @@ func ThrowTor() proxy.Dialer {
 	return dialer
 }
 
-//Printerr print error message
-func Printerr(err error, fromwhere string) {
-	if err != nil {
-		Bad(fmt.Sprintf("%s : %v", fromwhere, err))
-	}
-}

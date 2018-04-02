@@ -19,18 +19,19 @@ Nothing to see here!
 TODO:
 -----
 
-- [x] DONE regex for verifing url
-- [x] DONE check the connecivity to the url
-- [x] DONE set extension
-- [x] DONE set proxy
-- [x] DONE add support of Tor
-- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy)
-- [x] DONE use thread
-- [x] DONE set Cookies
-- [x] DONE random useragent if not set
-- [ ] TODO generating json file of the result + (forget the idea)
-- [ ] TODO a log file for debbuging
-- [ ] TODO why no an UI Just saying
+- [x] DONE regex for verifing url.
+- [x] DONE check the connecivity to the url.
+- [x] DONE set extension.
+- [x] DONE set proxy.
+- [x] DONE add support of Tor.
+- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy).
+- [x] DONE use thread.
+- [x] DONE set Cookies.
+- [x] DONE random useragent if not set.
+- [ ] TODO read from proxy file.
+- [ ] TODO generating json file of the result + (forget the idea).
+- [ ] TODO a log file for debbuging.
+- [ ] TODO why no an UI Just saying.
 
 Usage:
 ------

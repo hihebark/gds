@@ -69,3 +69,10 @@ func Good(message string) {
 func Run(message string) {
 	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, WHITE), RUN, message, RESET)
 }
+
+//Printerr print error message
+func Printerr(err error, fromwhere string) {
+	if err != nil {
+		Bad(fmt.Sprintf("%s : %v", fromwhere, err))
+	}
+}
