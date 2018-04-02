@@ -10,8 +10,11 @@ import (
 	"github.com/hihebark/godirsearch/core"
 )
 
-const version string = "0.3.0Dev"
-const LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+//Const
+const (
+	version string = "0.3.0Dev"
+	LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+)
 
 var (
 	tor                                                     *bool

@@ -42,7 +42,7 @@ func Say(color, message string) {
 
 //SayMe will return a message with the defined color.
 func SayMe(color, message string) string {
-	return fmt.Sprintf(START, color)+message+RESET
+	return fmt.Sprintf(START, color) + message + RESET
 }
 
 //Info to show output with orange color.

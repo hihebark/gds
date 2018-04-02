@@ -1,20 +1,20 @@
 package core
 
 import (
-	"os"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
 	"sync"
 	"time"
-	"strings"
-	"net/url"
-	"net/http"
-	"io/ioutil"
 
 	"golang.org/x/net/proxy"
 )
 
-var(
+var (
 	waitRequest sync.WaitGroup
 )
 
@@ -43,12 +43,12 @@ func CheckConnectivty(host string) int {
 }
 
 //DoRequest to make request and return status, content-length
-func DoRequest(req *http.Request, client http.Client) (int, int64){
-	
+func DoRequest(req *http.Request, client http.Client) (int, int64) {
+
 	response, err := client.Do(req)
 	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
 	return response.StatusCode, response.ContentLength
-	
+
 }
 
 //MakeRequest to make request and return status, content-length
@@ -105,12 +105,12 @@ func Fuxe(netreq NetRequest) {
 	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", len(allPath), netreq.Ex))
 	waitRequest.Add(len(allPath))
 	murl, _ := url.ParseRequestURI(netreq.Host)
-	client := &http.Client{ Transport : transport }
+	client := &http.Client{Transport: transport}
 	req := &http.Request{
-		Method:"GET",
-		Header:map[string][]string{
-			"Cookie":[]string{netreq.Cookie},
-			"User-Agent":[]string{netreq.UserAgent},
+		Method: "GET",
+		Header: map[string][]string{
+			"Cookie":     {netreq.Cookie},
+			"User-Agent": {netreq.UserAgent},
 		},
 	}
 	for i := 0; i < len(allPath); i++ {
@@ -159,8 +159,8 @@ func ThrowTor() proxy.Dialer {
 	Printerr(err, "ThrowTor:proxy.FromURL")
 	return dialer
 }
-
-func ShowOutput(status int, length int64, url string){
+//ShowOutput
+func ShowOutput(status int, length int64, url string) {
 	switch {
 	case status >= 200 && status < 299:
 		Say(LIGHTGREEN, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
@@ -170,4 +170,3 @@ func ShowOutput(status int, length int64, url string){
 		Say(LIGHTRED, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
 	}
 }
-

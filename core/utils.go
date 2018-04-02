@@ -83,11 +83,10 @@ func Execute(pathExec string, args []string) (string, error) {
 }
 
 //GetRandLine to return random line of file
-func GetRandLine(file string) string{
+func GetRandLine(file string) string {
 	line, err := Execute("/usr/bin/shuf", []string{"-n 1", file})
 	if err != nil {
 		Bad(fmt.Sprintf("utils:GetRandLine: f:%s e:%v", file, err))
 	}
 	return line
 }
-
