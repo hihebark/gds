@@ -15,7 +15,7 @@ import (
 )
 
 var(
-	waitg sync.WaitGroup
+	waitRequest sync.WaitGroup
 )
 
 //NetRequest for Request data.
@@ -42,20 +42,29 @@ func CheckConnectivty(host string) int {
 
 }
 
-//MakeRequest to make request and return status, content-length
-func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
-
-//	if netreq.Cookie != "" {
-//		req.Header.Set("Cookie", netreq.Cookie)
-//	}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalln("MakeRequest: ", err, host)
-		os.Exit(0)
-	}
-	return resp.StatusCode, resp.ContentLength
-
+//DoRequest to make request and return status, content-length
+func DoRequest(req *http.Request, client http.Client) (int, int64){
+	
+	response, err := client.Do(req)
+	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
+	return response.StatusCode, response.ContentLength
+	
 }
+
+//MakeRequest to make request and return status, content-length
+//func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
+
+////	if netreq.Cookie != "" {
+////		req.Header.Set("Cookie", netreq.Cookie)
+////	}
+//	resp, err := client.Do(req)
+//	if err != nil {
+//		log.Fatalln("MakeRequest: ", err, host)
+//		os.Exit(0)
+//	}
+//	return resp.StatusCode, resp.ContentLength
+
+//}
 
 //ByteConverter convert length to bytes, KB, MB, GB, TB.
 func ByteConverter(length int64) string {
@@ -93,8 +102,8 @@ func Fuxe(netreq NetRequest) {
 		Bad("the file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("File count: %d\n", len(allPath)))
-	waitg.Add(len(allPath))
+	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", len(allPath), netreq.Ex))
+	waitRequest.Add(len(allPath))
 	murl, _ := url.ParseRequestURI(netreq.Host)
 	client := &http.Client{ Transport : transport }
 	req := &http.Request{
@@ -108,44 +117,22 @@ func Fuxe(netreq NetRequest) {
 
 		go func(i int) {
 
-			defer waitg.Done()
+			defer waitRequest.Done()
 			murl.Path = allPath[i]
 			urlpath := murl.String()
 			req.URL = murl
-			//req.Header.Add("User-Agent", netreq.UserAgent)
-			status, length := MakeRequest(urlpath, req, *client)
-
-			switch {
-			case status >= 200 && status < 299:
-				Say(GREEN, fmt.Sprintf("Status: %d - %s\t\t%s",
-					status, ByteConverter(length), urlpath))
-			case status >= 300 && status < 399:
-				Say(LIGHTRED, fmt.Sprintf("Status: %d - %s\t\t%s",
-					status, ByteConverter(length), urlpath))
-			case status >= 400 && status < 500:
-				Say(ORANGE, fmt.Sprintf("Status: %d - %s\t\t%s",
-					status, ByteConverter(length), urlpath))
-			}
-			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
+			status, length := DoRequest(req, *client)
+			ShowOutput(status, length, urlpath)
+			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 1 {
 				for _, ext := range netreq.Ex {
 					req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
-					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
-					switch {
-					case mstatus >= 200 && mstatus < 299:
-						Say(GREEN, fmt.Sprintf("# Status: %d - %s\t\t%s",
-							mstatus, ByteConverter(mlength), urlpath))
-					case mstatus >= 300 && mstatus < 399:
-						Say(LIGHTRED, fmt.Sprintf("# Status: %d - %s\t\t%s",
-							mstatus, ByteConverter(mlength), urlpath))
-					case mstatus >= 400 && mstatus < 500:
-						Say(ORANGE, fmt.Sprintf("# Status: %d - %s\t\t%s",
-							mstatus, ByteConverter(mlength), urlpath))
-					}
+					status, length := DoRequest(req, *client)
+					ShowOutput(status, length, urlpath+"."+ext)
 				}
 			}
 		}(i)
 	}
-	waitg.Wait()
+	waitRequest.Wait()
 }
 
 //GetBody fetch the body
@@ -171,5 +158,16 @@ func ThrowTor() proxy.Dialer {
 	dialer, err := proxy.FromURL(torurl, proxy.Direct)
 	Printerr(err, "ThrowTor:proxy.FromURL")
 	return dialer
+}
+
+func ShowOutput(status int, length int64, url string){
+	switch {
+	case status >= 200 && status < 299:
+		Say(LIGHTGREEN, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+	case status >= 300 && status < 399:
+		Say(LIGHTBLUE, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+	case status >= 400 && status < 500:
+		Say(LIGHTRED, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+	}
 }
 

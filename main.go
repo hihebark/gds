@@ -10,7 +10,7 @@ import (
 	"github.com/hihebark/godirsearch/core"
 )
 
-const version string = "0.2.0Dev"
+const version string = "0.3.0Dev"
 const LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 
 var (
@@ -21,7 +21,7 @@ var (
 
 func init() {
 
-	ex = flag.String("ex", "txt", "separate with coma like php,txt ...")
+	ex = flag.String("ex", "", "separate with coma like php,txt ...")
 	tor = flag.Bool("tor", false, "Brutforce using Tor")
 	host = flag.String("host", "", "Host to brutforce")
 	proxy = flag.String("proxy", "", "Use a proxy to brutforce")
@@ -51,14 +51,15 @@ func main() {
 	status := core.CheckConnectivty(*host)
 	if re.MatchString(*host) && (status >= 200 && status < 300) {
 
-//		if !strings.HasSuffix(*host, "/") {
-//			*host += "/"
-//		}
+		if !strings.HasSuffix(*host, "/") {
+			*host += "/"
+		}
 		if *userAgent == "" {
 			*userAgent = strings.Split(core.GetRandLine("core/user-agents.txt"), "\n")[0]
-			core.Info(fmt.Sprintf("Setting random useragent: %s",*userAgent))
 		}
-		core.Run(fmt.Sprintf("Connection to %s Ok!", core.SayMe(core.LIGHTRED, *host)))
+		core.Run(fmt.Sprintf("Connection to %s %s\n",
+			core.SayMe(core.LIGHTRED, *host),
+			core.SayMe(core.GREEN, "OK")))
 		req := core.NetRequest{
 			Host:      *host,
 			Proxyfile: *proxyfile,
@@ -71,7 +72,9 @@ func main() {
 		}
 		core.Fuxe(req)
 	} else {
-		core.Bad(fmt.Sprintf("Host not recheable status: %s", status))
+		core.Good(fmt.Sprintf("Connection to %s %s\n",
+			core.SayMe(core.LIGHTRED, *host),
+			core.SayMe(core.RED, "Not reachable")))
 	}
 
 }

@@ -47,7 +47,7 @@ func SayMe(color, message string) string {
 
 //Info to show output with orange color.
 func Info(message string) {
-	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, ORANGE), INFO, message, RESET)
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, YELLOW), INFO, message, RESET)
 }
 
 //Que to show output with blue color.
