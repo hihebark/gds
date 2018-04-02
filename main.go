@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hihebark/godirsearch/core"
+	"github.com/hihebark/godirsearch/lib"
 )
 
 //Const
@@ -58,7 +58,7 @@ func main() {
 			*host += "/"
 		}
 		if *userAgent == "" {
-			*userAgent = strings.Split(core.GetRandLine("core/user-agents.txt"), "\n")[0]
+			*userAgent = strings.Split(core.GetRandLine("data/user-agents.txt"), "\n")[0]
 		}
 		core.Run(fmt.Sprintf("Connection to %s %s\n",
 			core.SayMe(core.LIGHTRED, *host),
