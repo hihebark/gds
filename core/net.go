@@ -153,7 +153,7 @@ func GetBody(netreq NetRequest) {
 	url, _ := url.Parse(netreq.Host)
 	request, err := http.NewRequest("GET", url.String(), nil)
 	request.Header.Set("Cookie", netreq.Cookie)
-	request.Header.Set("User-Agent", strings.Split(netreq.UserAgent, "\n")[0])
+	request.Header.Set("User-Agent", netreq)
 	Printerr(err, "GetBody:http.NewRequest")
 	response, err := client.Do(request)
 	Printerr(err, "GetBody:client.Do")

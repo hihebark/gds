@@ -55,7 +55,8 @@ func main() {
 //			*host += "/"
 //		}
 		if *userAgent == "" {
-			*userAgent = core.GetRandLine("core/user-agents.txt")
+			*userAgent = strings.Split(core.GetRandLine("core/user-agents.txt"), "\n")[0]
+			core.Info(fmt.Sprintf("Setting random useragent: %s",*userAgent))
 		}
 		core.Run(fmt.Sprintf("Connection to %s Ok!", core.SayMe(core.LIGHTRED, *host)))
 		req := core.NetRequest{
