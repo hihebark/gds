@@ -11,7 +11,7 @@ import (
 )
 
 const version string = "0.1.1"
-const LOGO string = " █▀▀▀▀▄\n █ ■■ █\n █▄▄▄▄█\n"
+const LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 
 var (
 	tor                                                     *bool
