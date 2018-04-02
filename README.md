@@ -36,7 +36,10 @@ Usage:
 ------
 
 ```
-	GoDirSearch ~0.1.1
+ ▄▄▄▄
+ █ ▄ █
+ █▄▄▄█
+ GoDirSearch ~0.2.0
 Usage of GoDirSearch:
   -cookie string
     	cookie
@@ -53,7 +56,8 @@ Usage of GoDirSearch:
   -tor
     	Brutforce using Tor
   -useragent string
-    	userAgent (default "Golang_Spider_Bot/3.0")
+    	userAgent
   -worlist string
     	wordlist to brutforce (default "test.txt")
+
 ```

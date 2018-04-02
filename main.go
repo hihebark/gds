@@ -10,7 +10,7 @@ import (
 	"github.com/hihebark/godirsearch/core"
 )
 
-const version string = "0.1.1"
+const version string = "0.2.0"
 const LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 
 var (
