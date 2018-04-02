@@ -3,7 +3,7 @@ package core
 import (
 	"bufio"
 	"bytes"
-	//"fmt"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -76,8 +76,18 @@ func Execute(pathExec string, args []string) (string, error) {
 	}
 	cmd, err := exec.Command(path, args...).CombinedOutput()
 	if err != nil {
-		return "", err
+		return string(cmd), err
 	}
 	return string(cmd), nil
 
 }
+
+//GetRandLine to return random line of file
+func GetRandLine(file string) string{
+	line, err := Execute("/usr/bin/shuf", []string{"-n 1", file})
+	if err != nil {
+		Bad(fmt.Sprintf("utils:GetRandLine: f:%s e:%v", file, err))
+	}
+	return line
+}
+

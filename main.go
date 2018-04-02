@@ -29,7 +29,7 @@ func init() {
 	cookie = flag.String("cookie", "", "cookie")
 	wordlist = flag.String("worlist", "test.txt", "wordlist to brutforce")
 	proxyfile = flag.String("proxyfile", "", "Use a proxy file")
-	userAgent = flag.String("useragent", "Golang_Spider_Bot/3.0", "userAgent")
+	userAgent = flag.String("useragent", "", "userAgent")
 
 }
 
@@ -51,10 +51,13 @@ func main() {
 	status := core.CheckConnectivty(*host)
 	if re.MatchString(*host) && (status >= 200 && status < 300) {
 
-		if !strings.HasSuffix(*host, "/") {
-			*host += "/"
+//		if !strings.HasSuffix(*host, "/") {
+//			*host += "/"
+//		}
+		if *userAgent == "" {
+			*userAgent = core.GetRandLine("core/user-agents.txt")
 		}
-		core.Run("Connection to the target Ok!")
+		core.Run(fmt.Sprintf("Connection to %s Ok!", core.SayMe(core.LIGHTRED, *host)))
 		req := core.NetRequest{
 			Host:      *host,
 			Proxyfile: *proxyfile,

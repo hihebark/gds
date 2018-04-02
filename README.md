@@ -26,8 +26,8 @@ TODO:
 - [x] DONE add support of Tor
 - [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy)
 - [x] DONE use thread
-- [ ] TODO set Cookies
-- [ ] TODO random useragent if not set
+- [x] DONE set Cookies
+- [x] DONE random useragent if not set
 - [ ] TODO generating json file of the result + (forget the idea)
 - [ ] TODO a log file for debbuging
 - [ ] TODO why no an UI Just saying

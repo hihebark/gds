@@ -41,8 +41,11 @@ func CheckConnectivty(host string) int {
 }
 
 //MakeRequest to make request and return status, content-length
-func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
+func MakeRequest(host string, req *http.Request, client http.Client, netreq NetRequest) (int, int64) {
 
+	if netreq.Cookie != "" {
+		req.Header.Set("Cookie", netreq.Cookie)
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatalln("MakeRequest: ", err, host)
@@ -83,7 +86,6 @@ func Fuxe(netreq NetRequest) {
 	if netreq.Tor {
 		transport.Dial = ThrowTor().Dial
 	}
-
 	allPath := ReadFromFile(netreq.Wordlist)
 	if len(allPath) == 0 {
 		Bad("the file is empty!")
@@ -101,8 +103,8 @@ func Fuxe(netreq NetRequest) {
 			murl.Path = allPath[i]
 			urlpath := murl.String()
 			req, _ := http.NewRequest("GET", urlpath, nil)
-			req.Header.Set("User-Agent", "Golang_Spider_Bot/3.0")
-			status, length := MakeRequest(urlpath, req, *client)
+			req.Header.Set("User-Agent", netreq.UserAgent)
+			status, length := MakeRequest(urlpath, req, *client, netreq)
 
 			switch {
 			case status >= 200 && status < 299:
@@ -118,7 +120,7 @@ func Fuxe(netreq NetRequest) {
 			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 0 {
 				for _, ext := range netreq.Ex {
 					req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
-					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client)
+					mstatus, mlength := MakeRequest(urlpath+"."+ext, req, *client, netreq)
 					switch {
 					case mstatus >= 200 && mstatus < 299:
 						Say(GREEN, fmt.Sprintf("# Status: %d - %s\t\t%s",
@@ -140,15 +142,18 @@ func Fuxe(netreq NetRequest) {
 //GetBody fetch the body
 func GetBody(netreq NetRequest) {
 
-	fixedURL, err := url.Parse(netreq.Proxy)
-	Printerr(err, "GetBody:url.Parse")
-	client := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(fixedURL),
-		},
-	}
+	//fixedURL, err := url.Parse(netreq.Proxy)
+	//Printerr(err, "GetBody:url.Parse")
+//	client := &http.Client{
+//		Transport: &http.Transport{
+//			Proxy: http.ProxyURL(fixedURL),
+//		},
+//	}
+	client := &http.Client{}
 	url, _ := url.Parse(netreq.Host)
 	request, err := http.NewRequest("GET", url.String(), nil)
+	request.Header.Set("Cookie", netreq.Cookie)
+	request.Header.Set("User-Agent", strings.Split(netreq.UserAgent, "\n")[0])
 	Printerr(err, "GetBody:http.NewRequest")
 	response, err := client.Do(request)
 	Printerr(err, "GetBody:client.Do")
