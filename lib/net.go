@@ -102,7 +102,7 @@ func Fuxe(netreq NetRequest) {
 		Bad("the file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", len(allPath), netreq.Ex))
+	Info(fmt.Sprintf("Wordlist size: %s / Extensions:%s\n", CountLine(netreq.Wordlist), netreq.Ex))
 	waitRequest.Add(len(allPath))
 	murl, _ := url.ParseRequestURI(netreq.Host)
 	client := &http.Client{Transport: transport}
