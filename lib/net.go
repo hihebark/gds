@@ -161,10 +161,10 @@ func ThrowTor() proxy.Dialer {
 func ShowOutput(status int, length int64, url string) {
 	switch {
 	case status >= 200 && status < 299:
-		Say(LIGHTGREEN, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTGREEN, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
 	case status >= 300 && status < 399:
-		Say(LIGHTBLUE, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTBLUE, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
 	case status >= 400 && status < 500:
-		Say(LIGHTRED, fmt.Sprintf("%d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTRED, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
 	}
 }

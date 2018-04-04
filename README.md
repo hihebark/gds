@@ -42,12 +42,12 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.2.0
-Usage of GoDirSearch:
+ GoDirSearch ~0.3.0Dev
+Usage of ./godirsearch:
   -cookie string
     	cookie
   -ex string
-    	separate with coma like php,txt ... (default "txt")
+    	separate with coma like php,txt ...
   -host string
     	Host to brutforce
   -proxy string
@@ -62,5 +62,6 @@ Usage of GoDirSearch:
     	userAgent
   -worlist string
     	wordlist to brutforce (default "test.txt")
+
 
 ```
