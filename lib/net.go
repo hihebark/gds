@@ -136,7 +136,7 @@ func GetBody(req *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return string(data)
+	return string(data), nil
 }
 
 //GetLenBody get the length of the body
