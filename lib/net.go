@@ -1,4 +1,4 @@
-package core
+package lib
 
 import (
 	"fmt"
@@ -16,6 +16,7 @@ import (
 
 var (
 	waitRequest sync.WaitGroup
+	mutex       = &sync.Mutex{}
 )
 
 //NetRequest for Request data.
@@ -42,29 +43,15 @@ func CheckConnectivty(host string) int {
 
 }
 
-//DoRequest to make request and return status, content-length
-func DoRequest(req *http.Request, client http.Client) (int, int64) {
+//DoRequest to make request and return status, content-length (string, int, int64)
+func DoRequest(req *http.Request, client http.Client) {
 
-	response, err := client.Do(req)
+	response, err := client.Get(req.URL.String())
 	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
-	return response.StatusCode, response.ContentLength
+	ShowOutput(response.StatusCode, int64(GetLenBody(req)), req.URL.String())
+	//return req.URL.String(), response.StatusCode, response.ContentLength
 
 }
-
-//MakeRequest to make request and return status, content-length
-//func MakeRequest(host string, req *http.Request, client http.Client) (int, int64) {
-
-////	if netreq.Cookie != "" {
-////		req.Header.Set("Cookie", netreq.Cookie)
-////	}
-//	resp, err := client.Do(req)
-//	if err != nil {
-//		log.Fatalln("MakeRequest: ", err, host)
-//		os.Exit(0)
-//	}
-//	return resp.StatusCode, resp.ContentLength
-
-//}
 
 //ByteConverter convert length to bytes, KB, MB, GB, TB.
 func ByteConverter(length int64) string {
@@ -118,37 +105,47 @@ func Fuxe(netreq NetRequest) {
 		go func(i int) {
 
 			defer waitRequest.Done()
+			mutex.Lock()
 			murl.Path = allPath[i]
-			urlpath := murl.String()
 			req.URL = murl
-			status, length := DoRequest(req, *client)
-			ShowOutput(status, length, urlpath)
-			if !strings.HasSuffix(urlpath, "/") && len(netreq.Ex) != 1 {
+			DoRequest(req, *client)
+			mutex.Unlock()
+			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
 				for _, ext := range netreq.Ex {
-					req, _ := http.NewRequest("GET", urlpath+"."+ext, nil)
-					status, length := DoRequest(req, *client)
-					ShowOutput(status, length, urlpath+"."+ext)
+					mutex.Lock()
+					req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
+					DoRequest(req, *client)
+					mutex.Unlock()
 				}
 			}
+
 		}(i)
 	}
 	waitRequest.Wait()
 }
 
 //GetBody fetch the body
-func GetBody(netreq NetRequest) {
+func GetBody(req *http.Request) (string, error) {
 
 	client := &http.Client{}
-	url, _ := url.Parse(netreq.Host)
-	request, err := http.NewRequest("GET", url.String(), nil)
-	request.Header.Set("Cookie", netreq.Cookie)
-	request.Header.Set("User-Agent", netreq.UserAgent)
-	Printerr(err, "GetBody:http.NewRequest")
-	response, err := client.Do(request)
-	Printerr(err, "GetBody:client.Do")
+	response, err := client.Get(req.URL.String())
+	if err != nil {
+		return "", err
+	}
 	data, err := ioutil.ReadAll(response.Body)
-	Printerr(err, "GetBody:ioutil.ReadAll")
-	fmt.Println(string(data))
+	if err != nil {
+		return "", err
+	}
+	return string(data)
+}
+
+//GetLenBody get the length of the body
+func GetLenBody(req *http.Request) int {
+	data, err := GetBody(req)
+	if err != nil {
+		Printerr(err, "GetLenBody:")
+	}
+	return len(data)
 }
 
 //ThrowTor activate the the app to go throw Tor
@@ -159,6 +156,7 @@ func ThrowTor() proxy.Dialer {
 	Printerr(err, "ThrowTor:proxy.FromURL")
 	return dialer
 }
+
 //ShowOutput
 func ShowOutput(status int, length int64, url string) {
 	switch {

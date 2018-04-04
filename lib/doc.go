@@ -4,4 +4,4 @@
 
 //logger just for pretty output
 
-package core
+package lib

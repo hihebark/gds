@@ -1,4 +1,4 @@
-package core
+package lib
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 )
 
 //CountLine Count the number of line in a wordlist to determine how much we will brutforce.
-func CountLine(file string) string{
+func CountLine(file string) string {
 	count, err := Execute("/usr/bin/wc", []string{"-l", file})
 	Printerr(err, "utils:Countline")
 	return strings.Split(count, " ")[0]

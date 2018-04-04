@@ -29,7 +29,8 @@ TODO:
 - [x] DONE set Cookies.
 - [x] DONE random useragent if not set.
 - [ ] TODO read from proxy file.
-- [ ] TODO hundle rediract
+- [ ] TODO hundle redirect.
+- [ ] TODO exclude some status.
 - [ ] TODO generating json file of the result + (forget the idea).
 - [ ] TODO a log file for debbuging.
 - [ ] TODO why no an UI Just saying.

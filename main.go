@@ -13,7 +13,7 @@ import (
 //Const
 const (
 	version string = "0.3.0Dev"
-	LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 )
 
 var (
@@ -38,10 +38,10 @@ func init() {
 
 func main() {
 
-	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", core.SayMe(core.LIGHTRED, LOGO), version)
+	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", lib.SayMe(lib.LIGHTRED, LOGO), version)
 	flag.Parse()
 	if *host == "" {
-		core.Que("No host argument found! add -host http://examples.com/")
+		lib.Que("No host argument found! add -host http://examples.com/")
 		os.Exit(0)
 	}
 
@@ -51,19 +51,19 @@ func main() {
 	 ****************************************************************************/
 
 	re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-	status := core.CheckConnectivty(*host)
+	status := lib.CheckConnectivty(*host)
 	if re.MatchString(*host) && (status >= 200 && status < 300) {
 
 		if !strings.HasSuffix(*host, "/") {
 			*host += "/"
 		}
 		if *userAgent == "" {
-			*userAgent = strings.Split(core.GetRandLine("data/user-agents.txt"), "\n")[0]
+			*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
 		}
-		core.Run(fmt.Sprintf("Connection to %s %s\n",
-			core.SayMe(core.LIGHTRED, *host),
-			core.SayMe(core.GREEN, "OK")))
-		req := core.NetRequest{
+		lib.Run(fmt.Sprintf("Connection to %s %s\n",
+			lib.SayMe(lib.LIGHTRED, *host),
+			lib.SayMe(lib.GREEN, "OK")))
+		req := lib.NetRequest{
 			Host:      *host,
 			Proxyfile: *proxyfile,
 			Wordlist:  *wordlist,
@@ -73,11 +73,11 @@ func main() {
 			Proxy:     *proxy,
 			Tor:       *tor,
 		}
-		core.Fuxe(req)
+		lib.Fuxe(req)
 	} else {
-		core.Good(fmt.Sprintf("Connection to %s %s\n",
-			core.SayMe(core.LIGHTRED, *host),
-			core.SayMe(core.RED, "Not reachable")))
+		lib.Good(fmt.Sprintf("Connection to %s %s\n",
+			lib.SayMe(lib.LIGHTRED, *host),
+			lib.SayMe(lib.RED, "Not reachable")))
 	}
 
 }
