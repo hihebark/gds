@@ -1,4 +1,4 @@
-package core
+package lib
 
 import "fmt"
 
@@ -42,12 +42,12 @@ func Say(color, message string) {
 
 //SayMe will return a message with the defined color.
 func SayMe(color, message string) string {
-	return fmt.Sprintf(START, color)+message+RESET
+	return fmt.Sprintf(START, color) + message + RESET
 }
 
 //Info to show output with orange color.
 func Info(message string) {
-	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, ORANGE), INFO, message, RESET)
+	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, YELLOW), INFO, message, RESET)
 }
 
 //Que to show output with blue color.
@@ -68,4 +68,11 @@ func Good(message string) {
 //Run to show output with white color.
 func Run(message string) {
 	fmt.Printf("%s%s%s%s\n", fmt.Sprintf(START, WHITE), RUN, message, RESET)
+}
+
+//Printerr print error message
+func Printerr(err error, fromwhere string) {
+	if err != nil {
+		Bad(fmt.Sprintf("%s : %v", fromwhere, err))
+	}
 }

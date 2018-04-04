@@ -7,11 +7,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hihebark/godirsearch/core"
+	"github.com/hihebark/godirsearch/lib"
 )
 
-const version string = "0.1.1"
-const LOGO string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+//Const
+const (
+	version string = "0.3.0Dev"
+	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+)
 
 var (
 	tor                                                     *bool
@@ -21,7 +24,7 @@ var (
 
 func init() {
 
-	ex = flag.String("ex", "txt", "separate with coma like php,txt ...")
+	ex = flag.String("ex", "", "separate with coma like php,txt ...")
 	tor = flag.Bool("tor", false, "Brutforce using Tor")
 	host = flag.String("host", "", "Host to brutforce")
 	proxy = flag.String("proxy", "", "Use a proxy to brutforce")
@@ -29,16 +32,16 @@ func init() {
 	cookie = flag.String("cookie", "", "cookie")
 	wordlist = flag.String("worlist", "test.txt", "wordlist to brutforce")
 	proxyfile = flag.String("proxyfile", "", "Use a proxy file")
-	userAgent = flag.String("useragent", "Golang_Spider_Bot/3.0", "userAgent")
+	userAgent = flag.String("useragent", "", "userAgent")
 
 }
 
 func main() {
 
-	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", core.SayMe(core.LIGHTRED, LOGO), version)
+	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", lib.SayMe(lib.LIGHTRED, LOGO), version)
 	flag.Parse()
 	if *host == "" {
-		core.Que("No host argument found! add -host http://examples.com/")
+		lib.Que("No host argument found! add -host http://examples.com/")
 		os.Exit(0)
 	}
 
@@ -48,14 +51,19 @@ func main() {
 	 ****************************************************************************/
 
 	re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-	status := core.CheckConnectivty(*host)
+	status := lib.CheckConnectivty(*host)
 	if re.MatchString(*host) && (status >= 200 && status < 300) {
 
 		if !strings.HasSuffix(*host, "/") {
 			*host += "/"
 		}
-		core.Run("Connection to the target Ok!")
-		req := core.NetRequest{
+		if *userAgent == "" {
+			*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
+		}
+		lib.Run(fmt.Sprintf("Connection to %s %s\n",
+			lib.SayMe(lib.LIGHTRED, *host),
+			lib.SayMe(lib.GREEN, "OK")))
+		req := lib.NetRequest{
 			Host:      *host,
 			Proxyfile: *proxyfile,
 			Wordlist:  *wordlist,
@@ -65,9 +73,11 @@ func main() {
 			Proxy:     *proxy,
 			Tor:       *tor,
 		}
-		core.Fuxe(req)
+		lib.Fuxe(req)
 	} else {
-		core.Bad(fmt.Sprintf("Host not recheable status: %s", status))
+		lib.Good(fmt.Sprintf("Connection to %s %s\n",
+			lib.SayMe(lib.LIGHTRED, *host),
+			lib.SayMe(lib.RED, "Not reachable")))
 	}
 
 }

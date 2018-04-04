@@ -19,24 +19,30 @@ Nothing to see here!
 TODO:
 -----
 
-- [x] DONE regex for verifing url
-- [x] DONE check the connecivity to the url
-- [x] DONE set extension
-- [x] DONE set proxy
-- [x] DONE add support of Tor
-- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy)
-- [x] DONE use thread
-- [ ] TODO set Cookies
-- [ ] TODO random useragent if not set
-- [ ] TODO generating json file of the result + (forget the idea)
-- [ ] TODO a log file for debbuging
-- [ ] TODO why no an UI Just saying
+- [x] DONE regex for verifing url.
+- [x] DONE check the connecivity to the url.
+- [x] DONE set extension.
+- [x] DONE set proxy.
+- [x] DONE add support of Tor.
+- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy).
+- [x] DONE use thread.
+- [x] DONE set Cookies.
+- [x] DONE random useragent if not set.
+- [ ] TODO read from proxy file.
+- [ ] TODO hundle redirect.
+- [ ] TODO exclude some status.
+- [ ] TODO generating json file of the result + (forget the idea).
+- [ ] TODO a log file for debbuging.
+- [ ] TODO why no an UI Just saying.
 
 Usage:
 ------
 
 ```
-	GoDirSearch ~0.1.1
+ ▄▄▄▄
+ █ ▄ █
+ █▄▄▄█
+ GoDirSearch ~0.2.0
 Usage of GoDirSearch:
   -cookie string
     	cookie
@@ -53,7 +59,8 @@ Usage of GoDirSearch:
   -tor
     	Brutforce using Tor
   -useragent string
-    	userAgent (default "Golang_Spider_Bot/3.0")
+    	userAgent
   -worlist string
     	wordlist to brutforce (default "test.txt")
+
 ```
