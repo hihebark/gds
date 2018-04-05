@@ -21,7 +21,9 @@ Godirsearch
 ===========
 
 Godirsearch is a golang application to brute force web site and search for hidden or Folder and Directorie.
+
 I started this project to learn Go-Lang so if you spot an error be kind a report'it i will digg'in to find a solution.
+
 This project is still in a development.
 
 Usage:
@@ -53,3 +55,5 @@ Usage of ./godirsearch:
     	wordlist to brutforce (default "test.txt")
 
 ```
+
+> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
