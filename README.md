@@ -17,28 +17,12 @@
 	<img src="https://golang.org/doc/gopher/pkg.png">
 </p>
 
-godirsearch
+Godirsearch
 ===========
-Nothing to see here!
 
-TODO:
------
-
-- [x] DONE regex for verifing url.
-- [x] DONE check the connecivity to the url.
-- [x] DONE set extension.
-- [x] DONE set proxy.
-- [x] DONE add support of Tor.
-- [x] DONE add read from grepproxylist.sh (not realy to add if detect block get another proxy).
-- [x] DONE use thread.
-- [x] DONE set Cookies.
-- [x] DONE random useragent if not set.
-- [ ] TODO read from proxy file.
-- [ ] TODO hundle redirect.
-- [ ] TODO exclude some status.
-- [ ] TODO generating json file of the result + (forget the idea).
-- [ ] TODO a log file for debbuging.
-- [ ] TODO why no an UI Just saying.
+Godirsearch is a golang application to brute force web site and search for hidden or Folder and Directorie.
+I started this project to learn Go-Lang so if you spot an error be kind a report'it i will digg'in to find a solution.
+This project is still in a development.
 
 Usage:
 ------
@@ -67,6 +51,5 @@ Usage of ./godirsearch:
     	userAgent
   -worlist string
     	wordlist to brutforce (default "test.txt")
-
 
 ```
