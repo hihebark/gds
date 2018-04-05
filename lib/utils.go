@@ -53,7 +53,8 @@ func Readln(r *bufio.Reader) (string, error) {
 
 }
 
-//Execute a commande basically used to excute grepproxylist.sh .
+// Execute a shell command.
+// return cmd (output) or emty string if error
 func Execute(pathExec string, args []string) (string, error) {
 
 	path, err := exec.LookPath(pathExec)

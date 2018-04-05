@@ -43,17 +43,19 @@ func CheckConnectivty(host string) int {
 
 }
 
-//DoRequest to make request and return status, content-length (string, int, int64)
+// DoRequest to make request
+// param *http.Request, http.Client
 func DoRequest(req *http.Request, client http.Client) {
 
 	response, err := client.Get(req.URL.String())
 	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
 	ShowOutput(response.StatusCode, int64(GetLenBody(req)), req.URL.String())
-	//return req.URL.String(), response.StatusCode, response.ContentLength
 
 }
 
 //ByteConverter convert length to bytes, KB, MB, GB, TB.
+// param  int64
+// return string
 func ByteConverter(length int64) string {
 	mbyte := []string{"bytes", "KB", "MB", "GB", "TB"}
 	if length == -1 {
@@ -68,7 +70,8 @@ func ByteConverter(length int64) string {
 	return ""
 }
 
-//Fuxe to brute force the host
+//Fuxe to brute force the web-host
+// param NetRequest (struct)
 func Fuxe(netreq NetRequest) {
 
 	transport := &http.Transport{
@@ -85,12 +88,13 @@ func Fuxe(netreq NetRequest) {
 		transport.Dial = ThrowTor().Dial
 	}
 	allPath := ReadFromFile(netreq.Wordlist)
-	if len(allPath) == 0 {
+	pathLength := len(allPath)
+	if pathLength == 0 {
 		Bad("the file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("Wordlist size: %s / Extensions:%s\n", CountLine(netreq.Wordlist), netreq.Ex))
-	waitRequest.Add(len(allPath))
+	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
+	waitRequest.Add(pathLength)
 	murl, _ := url.ParseRequestURI(netreq.Host)
 	client := &http.Client{Transport: transport}
 	req := &http.Request{
@@ -100,7 +104,7 @@ func Fuxe(netreq NetRequest) {
 			"User-Agent": {netreq.UserAgent},
 		},
 	}
-	for i := 0; i < len(allPath); i++ {
+	for i := 0; i < pathLength; i++ {
 
 		go func(i int) {
 
@@ -122,6 +126,7 @@ func Fuxe(netreq NetRequest) {
 		}(i)
 	}
 	waitRequest.Wait()
+
 }
 
 //GetBody fetch the body
@@ -137,6 +142,7 @@ func GetBody(req *http.Request) (string, error) {
 		return "", err
 	}
 	return string(data), nil
+
 }
 
 //GetLenBody get the length of the body
@@ -157,7 +163,7 @@ func ThrowTor() proxy.Dialer {
 	return dialer
 }
 
-//ShowOutput
+//ShowOutput print prety output from a request
 func ShowOutput(status int, length int64, url string) {
 	switch {
 	case status >= 200 && status < 299:
