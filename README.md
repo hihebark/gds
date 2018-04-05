@@ -8,9 +8,16 @@
     <a href="https://travis-ci.org/hihebark/godirsearch.svg?branch=master">
         <img src="https://travis-ci.org/hihebark/godirsearch.svg?branch=master" alt="travis">
     </a>
+    <a href="https://github.com/hihebark/godirsearch/blob/master/LICENSE">
+        <img src="https://img.shields.io/aur/license/yaourt.svg" alt="license">
+    </a>
 </p>
 
-![Golang gopher](https://golang.org/doc/gopher/pkg.png)
+<p align="center">
+	<img src="https://golang.org/doc/gopher/pkg.png">
+</p>
+
+//![Golang gopher](https://golang.org/doc/gopher/pkg.png)
 
 godirsearch
 ===========
