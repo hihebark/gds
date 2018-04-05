@@ -17,8 +17,6 @@
 	<img src="https://golang.org/doc/gopher/pkg.png">
 </p>
 
-//![Golang gopher](https://golang.org/doc/gopher/pkg.png)
-
 godirsearch
 ===========
 Nothing to see here!
