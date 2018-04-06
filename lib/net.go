@@ -1,6 +1,7 @@
 package lib
 
 import (
+	//"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -17,6 +18,7 @@ import (
 var (
 	waitRequest sync.WaitGroup
 	mutex       = &sync.Mutex{}
+	webserver   WebServerslice
 )
 
 //NetRequest for Request data.
@@ -29,6 +31,19 @@ type NetRequest struct {
 	Ex        []string
 	Proxy     string
 	Tor       bool
+}
+
+//WebServer json format
+type WebServer struct {
+	ID     int    `json:"-"`
+	URL    string `json:"url"`
+	Status int `json:"status"`
+	Length int64  `json:"length"`
+}
+
+//WebServerslice json format
+type WebServerslice struct {
+	WebServers []WebServer `json:"host"`
 }
 
 //CheckConnectivty check if the provided host is up or not.
@@ -45,10 +60,17 @@ func CheckConnectivty(host string) int {
 
 // DoRequest to make request
 // param *http.Request, http.Client
-func DoRequest(req *http.Request, client http.Client) {
+func DoRequest(req *http.Request, client http.Client, i int) {
 
 	response, err := client.Get(req.URL.String())
 	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
+	wb := WebServer{
+		ID:     i,
+		URL:    req.URL.String(),
+		Status: response.StatusCode,
+		Length: int64(GetLenBody(req)),
+	}
+	webserver.WebServers = append(webserver.WebServers, wb)
 	ShowOutput(response.StatusCode, int64(GetLenBody(req)), req.URL.String())
 
 }
@@ -112,13 +134,13 @@ func Fuxe(netreq NetRequest) {
 			mutex.Lock()
 			murl.Path = allPath[i]
 			req.URL = murl
-			DoRequest(req, *client)
+			DoRequest(req, *client, i)
 			mutex.Unlock()
 			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
 				for _, ext := range netreq.Ex {
 					mutex.Lock()
 					req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
-					DoRequest(req, *client)
+					DoRequest(req, *client, i)
 					mutex.Unlock()
 				}
 			}
@@ -126,6 +148,8 @@ func Fuxe(netreq NetRequest) {
 		}(i)
 	}
 	waitRequest.Wait()
+//	jsonF, _ := json.Marshal(webserver)
+//	fmt.Printf("%+v\n", string(jsonF))
 
 }
 
@@ -167,10 +191,10 @@ func ThrowTor() proxy.Dialer {
 func ShowOutput(status int, length int64, url string) {
 	switch {
 	case status >= 200 && status < 299:
-		Say(LIGHTGREEN, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTGREEN, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
 	case status >= 300 && status < 399:
-		Say(LIGHTBLUE, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTBLUE, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
 	case status >= 400 && status < 500:
-		Say(LIGHTRED, fmt.Sprintf(" %d - %s\t - \t%s", status, ByteConverter(length), url))
+		Say(LIGHTRED, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
 	}
 }
