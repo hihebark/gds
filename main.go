@@ -63,15 +63,19 @@ func main() {
 		lib.Run(fmt.Sprintf("Connection to %s %s\n",
 			lib.SayMe(lib.LIGHTRED, *host),
 			lib.SayMe(lib.GREEN, "OK")))
+		refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
+		resultFile := refolder.Split("http://www.ouedkniss.com/", 2)[1]
+		os.MkdirAll("data/results/"+resultFile, 0755)
 		req := lib.NetRequest{
-			Host:      *host,
-			Proxyfile: *proxyfile,
-			Wordlist:  *wordlist,
-			UserAgent: *userAgent,
-			Cookie:    *cookie,
-			Ex:        strings.Split(*ex, ","),
-			Proxy:     *proxy,
-			Tor:       *tor,
+			Host:       *host,
+			Proxyfile:  *proxyfile,
+			Wordlist:   *wordlist,
+			UserAgent:  *userAgent,
+			Cookie:     *cookie,
+			Ex:         strings.Split(*ex, ","),
+			Proxy:      *proxy,
+			Tor:        *tor,
+			ResultFile: resultFile,
 		}
 		lib.Fuxe(req)
 	} else {

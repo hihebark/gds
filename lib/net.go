@@ -1,7 +1,7 @@
 package lib
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,21 +23,22 @@ var (
 
 //NetRequest for Request data.
 type NetRequest struct {
-	Host      string
-	Proxyfile string
-	Wordlist  string
-	UserAgent string
-	Cookie    string
-	Ex        []string
-	Proxy     string
-	Tor       bool
+	Host       string
+	Proxyfile  string
+	Wordlist   string
+	UserAgent  string
+	Cookie     string
+	Ex         []string
+	Proxy      string
+	Tor        bool
+	ResultFile string
 }
 
 //WebServer json format
 type WebServer struct {
 	ID     int    `json:"-"`
 	URL    string `json:"url"`
-	Status int `json:"status"`
+	Status int    `json:"status"`
 	Length int64  `json:"length"`
 }
 
@@ -148,8 +149,10 @@ func Fuxe(netreq NetRequest) {
 		}(i)
 	}
 	waitRequest.Wait()
-//	jsonF, _ := json.Marshal(webserver)
-//	fmt.Printf("%+v\n", string(jsonF))
+	jsonF, _ := json.Marshal(webserver)
+	timenow := time.Now().Format("2006-01-02-15-04-05")
+	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
+	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
 }
 

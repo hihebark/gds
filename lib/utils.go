@@ -37,6 +37,18 @@ func ReadFromFile(filePath string) []string {
 
 }
 
+//WriteToFile to write to a file
+func WriteToFile(filePath string, instring string) {
+
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		fmt.Println(filePath, err)
+		return
+	}
+	defer file.Close()
+	file.WriteString(instring + "\r\n")
+}
+
 //Readln file line per line.
 func Readln(r *bufio.Reader) (string, error) {
 
