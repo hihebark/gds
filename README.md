@@ -5,7 +5,7 @@
     <a href="https://goreportcard.com/report/github.com/hihebark/godirsearch">
         <img src="https://goreportcard.com/badge/github.com/hihebark/godirsearch" alt="GoReportCard">
     </a>
-    <a href="https://travis-ci.org/hihebark/godirsearch.svg?branch=master">
+    <a href="https://travis-ci.org/hihebark/godirsearch">
         <img src="https://travis-ci.org/hihebark/godirsearch.svg?branch=master" alt="travis">
     </a>
     <a href="https://github.com/hihebark/godirsearch/blob/master/LICENSE">
@@ -33,8 +33,8 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.3.0Dev
-Usage of ./godirsearch:
+ GoDirSearch ~0.4.0Dev
+Usage of GoDirSearch:
   -cookie string
     	cookie
   -ex string

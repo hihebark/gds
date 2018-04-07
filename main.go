@@ -12,7 +12,7 @@ import (
 
 //Const
 const (
-	version string = "0.3.0Dev"
+	version string = "0.4.0Dev"
 	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 )
 
