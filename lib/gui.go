@@ -33,6 +33,5 @@ func StartListning(mux *MyMux) {
 	if err != nil {
 		fmt.Printf("StartListning:error: %s\n", err)
 	}
-	//http.HandleFunc("/results", views.ShowResult)
 }
 

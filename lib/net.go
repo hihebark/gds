@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -149,10 +149,10 @@ func Fuxe(netreq NetRequest) {
 		}(i)
 	}
 	waitRequest.Wait()
-	jsonF, _ := json.Marshal(webserver)
-	timenow := time.Now().Format("2006-01-02-15-04-05")
-	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
-	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
+//	jsonF, _ := json.Marshal(webserver)
+//	timenow := time.Now().Format("2006-01-02-15-04-05")
+//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
+//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
 }
 
@@ -200,4 +200,12 @@ func ShowOutput(status int, length int64, url string) {
 	case status >= 400 && status < 500:
 		Say(LIGHTRED, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
 	}
+}
+
+//ReturnUrl to return http.URL
+func ReturnUrl(host string) (*url.URL, error) {
+
+	murl, err := url.ParseRequestURI(host)
+	return murl, err
+
 }

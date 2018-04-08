@@ -49,8 +49,8 @@ func WriteToFile(filePath string, instring string) {
 	file.WriteString(instring + "\r\n")
 }
 
-//Readln file line per line.
-func Readln(r *bufio.Reader) (string, error) {
+//ReadLine file line per line.
+func ReadLine(r *bufio.Reader) (string, error) {
 
 	var (
 		isPrefix = true
@@ -66,7 +66,7 @@ func Readln(r *bufio.Reader) (string, error) {
 }
 
 // Execute a shell command.
-// return cmd (output) or emty string if error
+// return cmd (output) or emty string if error.
 func Execute(pathExec string, args []string) (string, error) {
 
 	path, err := exec.LookPath(pathExec)

@@ -1,7 +1,9 @@
-//utils: for manipulating file and ...
-
-//net: for every thing with the network
-
-//logger just for pretty output
+// Package lib: contain all the functionality needed.
+//
+// Utils: for manipulating file and system.
+//
+// Net: for every thing related with Network.
+//
+// Logger just for pretty output.
 
 package lib

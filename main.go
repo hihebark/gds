@@ -4,35 +4,38 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"regexp"
 	"strings"
+	"syscall"
 
 	"github.com/hihebark/godirsearch/lib"
 )
 
 //Const
 const (
-	version string = "0.4.0Dev"
+	version string = "0.4.0-Dev"
 	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 )
 
 var (
-	tor                                                     *bool
+	tor, http                                               *bool
 	thread                                                  *int
 	host, proxy, cookie, wordlist, proxyfile, userAgent, ex *string
 )
 
 func init() {
 
-	ex = flag.String("ex", "", "separate with coma like php,txt ...")
-	tor = flag.Bool("tor", false, "Brutforce using Tor")
-	host = flag.String("host", "", "Host to brutforce")
+	ex = flag.String("ex", "", "Extension separate by comma like [php,txt]")
+	tor = flag.Bool("tor", false, "Use the test with Tor for anonymity")
+	host = flag.String("host", "", "Host/Target to search for subdirectory exemple: http://exemple.com/")
 	proxy = flag.String("proxy", "", "Use a proxy to brutforce")
-	thread = flag.Int("thread", 4, "Number of thread")
-	cookie = flag.String("cookie", "", "cookie")
-	wordlist = flag.String("worlist", "test.txt", "wordlist to brutforce")
-	proxyfile = flag.String("proxyfile", "", "Use a proxy file")
-	userAgent = flag.String("useragent", "", "userAgent")
+	thread = flag.Int("thread", 4, "Number of thread (not set)")
+	cookie = flag.String("cookie", "", "Cookie if needed")
+	wordlist = flag.String("worlist", "data/wordlist.txt", "Wordlist to use for the search")
+	proxyfile = flag.String("proxyfile", "", "Use a proxy file (not set)")
+	http = flag.Bool("http", false, "http server to consult the result")
+	userAgent = flag.String("useragent", "", "UserAgent if not set it will generate one randomly")
 
 }
 
@@ -42,8 +45,17 @@ func main() {
 	flag.Parse()
 	if *host == "" {
 		lib.Que("No host argument found! add -host http://examples.com/")
+		flag.PrintDefaults()
 		os.Exit(0)
 	}
+
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Printf(lib.SayMe(lib.LIGHTRED, "Ctrl+c detected quiting now ..."))
+		os.Exit(1)
+	}()
 
 	/***************************************************************************
 	 * Best regex `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
@@ -59,6 +71,10 @@ func main() {
 		}
 		if *userAgent == "" {
 			*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
+		}
+		if *http {
+			mux := &lib.MyMux{}
+			lib.StartListning(mux)
 		}
 		lib.Run(fmt.Sprintf("Connection to %s %s\n",
 			lib.SayMe(lib.LIGHTRED, *host),
