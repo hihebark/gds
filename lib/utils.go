@@ -37,6 +37,27 @@ func ReadFromFile(filePath string) []string {
 
 }
 
+//ReturnStringFile return the content of file
+func ReturnStringFile(filePath string) string {
+
+	var line string
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatalln(err.Error() + `: ` + filePath)
+		os.Exit(1)
+	} else {
+		defer file.Close()
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line += scanner.Text()
+		//fmt.Println(scanner.Text())
+	}
+	return line
+
+}
+
 //WriteToFile to write to a file
 func WriteToFile(filePath string, instring string) {
 
