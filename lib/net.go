@@ -149,10 +149,10 @@ func Fuxe(netreq NetRequest) {
 		}(i)
 	}
 	waitRequest.Wait()
-//	jsonF, _ := json.Marshal(webserver)
-//	timenow := time.Now().Format("2006-01-02-15-04-05")
-//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
-//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
+	//	jsonF, _ := json.Marshal(webserver)
+	//	timenow := time.Now().Format("2006-01-02-15-04-05")
+	//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
+	//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
 }
 
@@ -202,8 +202,8 @@ func ShowOutput(status int, length int64, url string) {
 	}
 }
 
-//ReturnUrl to return http.URL
-func ReturnUrl(host string) (*url.URL, error) {
+//ReturnURL to return http.URL
+func ReturnURL(host string) (*url.URL, error) {
 
 	murl, err := url.ParseRequestURI(host)
 	return murl, err

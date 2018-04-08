@@ -5,8 +5,9 @@ import (
 	"net/http"
 )
 
+//MyMux wtf is this <<<
 type MyMux struct {
-
+	
 }
 
 //ServeHTTP hundle route
@@ -14,10 +15,8 @@ func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/results" {
 		ShowResult(w, r)
 		return
-	}else {
-		http.Redirect(w, r, "/results", http.StatusFound)
 	}
-	http.NotFound(w, r)
+	http.Redirect(w, r, "/results", http.StatusFound)
 	return
 }
 
@@ -35,4 +34,3 @@ func StartListning(mux *MyMux) {
 		fmt.Printf("StartListning:error: %s\n", err)
 	}
 }
-

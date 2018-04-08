@@ -41,13 +41,8 @@ func init() {
 
 func main() {
 
-	fmt.Printf("%s GoDirSearch \033[92m~%s\n\033[0m", lib.SayMe(lib.LIGHTRED, LOGO), version)
+	fmt.Printf("%s GoDirSearch \033[92m~%s\n\n\033[0m", lib.SayMe(lib.LIGHTRED, LOGO), version)
 	flag.Parse()
-	if *host == "" {
-		lib.Que("No host argument found! add -host http://examples.com/")
-		flag.PrintDefaults()
-		os.Exit(0)
-	}
 
 	c := make(chan os.Signal, 2)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
@@ -57,47 +52,69 @@ func main() {
 		os.Exit(1)
 	}()
 
+	if *host != "" {
+
+		re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
+		
+		status := lib.CheckConnectivty(*host)
+		
+		if re.MatchString(*host) && (status >= 200 && status < 300) {
+
+			if !strings.HasSuffix(*host, "/") {
+				*host += "/"
+			}
+
+			if *userAgent == "" {
+				*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
+			}
+
+			if *http {
+				mux := &lib.MyMux{}
+				lib.StartListning(mux)
+			}
+
+			lib.Run(fmt.Sprintf("Connection to %s %s\n",
+				lib.SayMe(lib.LIGHTRED, *host),
+				lib.SayMe(lib.GREEN, "OK")))
+
+			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
+			resultFile := refolder.Split("http://www.ouedkniss.com/", 2)[1]
+			os.MkdirAll("data/results/"+resultFile, 0755)
+			
+			req := lib.NetRequest{
+				Host:       *host,
+				Proxyfile:  *proxyfile,
+				Wordlist:   *wordlist,
+				UserAgent:  *userAgent,
+				Cookie:     *cookie,
+				Ex:         strings.Split(*ex, ","),
+				Proxy:      *proxy,
+				Tor:        *tor,
+				ResultFile: resultFile,
+			}
+			lib.Fuxe(req)
+		} else {
+			lib.Good(fmt.Sprintf("Connection to %s %s\n",
+				lib.SayMe(lib.LIGHTRED, *host),
+				lib.SayMe(lib.RED, "Not reachable")))
+		}
+
+	} else {
+
+		if !*http {
+			lib.Que("No host argument found! add one of the argument -host | http")
+			flag.PrintDefaults()
+			os.Exit(0)
+		} else {
+			mux := &lib.MyMux{}
+			lib.StartListning(mux)
+		}
+
+	}
+
 	/***************************************************************************
 	 * Best regex `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
 	 * http://www.golangprograms.com/golang-package-examples/regular-expression-to-extract-domain-from-url.html
 	 ****************************************************************************/
-
-	re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-	status := lib.CheckConnectivty(*host)
-	if re.MatchString(*host) && (status >= 200 && status < 300) {
-
-		if !strings.HasSuffix(*host, "/") {
-			*host += "/"
-		}
-		if *userAgent == "" {
-			*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
-		}
-		if *http {
-			mux := &lib.MyMux{}
-			lib.StartListning(mux)
-		}
-		lib.Run(fmt.Sprintf("Connection to %s %s\n",
-			lib.SayMe(lib.LIGHTRED, *host),
-			lib.SayMe(lib.GREEN, "OK")))
-		refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
-		resultFile := refolder.Split("http://www.ouedkniss.com/", 2)[1]
-		os.MkdirAll("data/results/"+resultFile, 0755)
-		req := lib.NetRequest{
-			Host:       *host,
-			Proxyfile:  *proxyfile,
-			Wordlist:   *wordlist,
-			UserAgent:  *userAgent,
-			Cookie:     *cookie,
-			Ex:         strings.Split(*ex, ","),
-			Proxy:      *proxy,
-			Tor:        *tor,
-			ResultFile: resultFile,
-		}
-		lib.Fuxe(req)
-	} else {
-		lib.Good(fmt.Sprintf("Connection to %s %s\n",
-			lib.SayMe(lib.LIGHTRED, *host),
-			lib.SayMe(lib.RED, "Not reachable")))
-	}
 
 }
