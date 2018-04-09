@@ -28,7 +28,7 @@ func init() {
 
 	ex = flag.String("ex", "", "Extension separate by comma like [php,txt]")
 	tor = flag.Bool("tor", false, "Use the test with Tor for anonymity")
-	host = flag.String("host", "", "Host/Target to search for subdirectory exemple: http://exemple.com/")
+	host = flag.String("host", "", "Host/Target to search for subdirectory example: http://example.com/")
 	proxy = flag.String("proxy", "", "Use a proxy to brutforce")
 	thread = flag.Int("thread", 4, "Number of thread (not set)")
 	cookie = flag.String("cookie", "", "Cookie if needed")
@@ -79,7 +79,7 @@ func main() {
 				lib.SayMe(lib.GREEN, "OK")))
 
 			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
-			resultFile := refolder.Split("http://www.ouedkniss.com/", 2)[1]
+			resultFile := refolder.Split(*host, 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
 
 			req := lib.NetRequest{
