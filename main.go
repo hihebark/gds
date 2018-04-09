@@ -55,9 +55,9 @@ func main() {
 	if *host != "" {
 
 		re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-		
+
 		status := lib.CheckConnectivty(*host)
-		
+
 		if re.MatchString(*host) && (status >= 200 && status < 300) {
 
 			if !strings.HasSuffix(*host, "/") {
@@ -81,7 +81,7 @@ func main() {
 			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
 			resultFile := refolder.Split("http://www.ouedkniss.com/", 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
-			
+
 			req := lib.NetRequest{
 				Host:       *host,
 				Proxyfile:  *proxyfile,

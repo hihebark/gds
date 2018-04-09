@@ -1,16 +1,15 @@
 package lib
 
 import (
-	"os"
-	"fmt"
 	"encoding/json"
-	"net/http"
+	"fmt"
 	"html/template"
+	"net/http"
+	"os"
 )
 
 // MyMux wtf is this <<<
 type MyMux struct {
-	
 }
 
 //ServeHTTP hundle results route
@@ -34,15 +33,12 @@ func ShowResult(w http.ResponseWriter, r *http.Request) {
 	if err = jsonParser.Decode(&data); err != nil {
 		Printerr(err, "gui:ShowResult:Parsing config file error")
 	}
-	
+
 	htmlTemplate := template.New("Godirsearch")
-//	htmlTemplate, err = htmlTemplate.ParseFiles("data/web/index.html")
+	//	htmlTemplate, err = htmlTemplate.ParseFiles("data/web/index.html") << to fix this
 	htmlTemplate, err = htmlTemplate.Parse(ReturnStringFile("data/web/index.html"))
 	Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles:")
-	//fmt.Printf("%+v\n",data.WebServers)
 	htmlTemplate.Execute(w, data.WebServers)
-	//fmt.Fprintf(w, fmt.Sprintf("%+v", data.WebServers))
-	//fmt.Printf("%+d\n", r)
 }
 
 //StartListning start listning to the given port

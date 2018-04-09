@@ -39,7 +39,7 @@ type WebServer struct {
 	ID     int    `json:"id"`
 	URL    string `json:"url"`
 	Status int    `json:"status"`
-	Length string  `json:"length"`
+	Length string `json:"length"`
 }
 
 //WebServerslice json format
@@ -151,7 +151,7 @@ func Fuxe(netreq NetRequest) {
 	waitRequest.Wait()
 	jsonF, _ := json.Marshal(webserver)
 	timenow := time.Now().Format("2006-01-02-15-04-05")
-	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] +"+"+timenow + ".json"
+	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + "+" + timenow + ".json"
 	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
 }
