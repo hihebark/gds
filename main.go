@@ -69,8 +69,9 @@ func main() {
 			}
 
 			if *http {
-				mux := &lib.MyMux{}
-				lib.StartListning(mux)
+				go func() {
+					lib.StartListning()
+				}()
 			}
 
 			lib.Run(fmt.Sprintf("Connection to %s %s\n",
@@ -106,8 +107,7 @@ func main() {
 			flag.PrintDefaults()
 			os.Exit(0)
 		} else {
-			mux := &lib.MyMux{}
-			lib.StartListning(mux)
+			lib.StartListning()
 		}
 
 	}

@@ -7,7 +7,7 @@
 	<body>
 		<nav class="navbar navbar-light bg-primary">
 			<a class="navbar-brand" href="#">
-				<img src="data/web/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+				<img src="logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
 				Godirsearch
 			</a>
 		</nav>
@@ -21,66 +21,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<th scope="row">1</th>
-					<td>http://exemple.com/includes</td>
-					<td>200</td>
-					<td>123ko</td>
-				</tr>
-				<tr>
-					<th scope="row">2</th>
-					<td>http://exemple.com/inc</td>
-					<td>301</td>
-					<td>20bytes</td>
-				</tr>
-				<tr>
-					<th scope="row">3</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
-				<tr>
-					<th scope="row">4</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
-				<tr>
-					<th scope="row">5</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
-				<tr>
-					<th scope="row">6</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
-				<tr>
-					<th scope="row">7</th>
-					<td>http://exemple.com/includes</td>
-					<td>200</td>
-					<td>123ko</td>
-				</tr>
-				<tr>
-					<th scope="row">8</th>
-					<td>http://exemple.com/inc</td>
-					<td>301</td>
-					<td>20bytes</td>
-				</tr>
-				<tr>
-					<th scope="row">9</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
-				<tr>
-					<th scope="row">10</th>
-					<td>http://exemple.com/robots.txt</td>
-					<td>200</td>
-					<td>1024ko</td>
-				</tr>
+				{{ range $key, $val := . }}
+					<tr>
+						<th scope="row">{{.ID}}</th>
+						<td>{{.URL}}</td>
+						<td>{{.Status}}</td>
+						<td>{{.Length}}</td>
+					</tr>
+				{{ end }}
 			</tbody>
 		</table>
 	</body>

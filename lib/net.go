@@ -1,7 +1,7 @@
 package lib
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -36,10 +36,10 @@ type NetRequest struct {
 
 //WebServer json format
 type WebServer struct {
-	ID     int    `json:"-"`
+	ID     int    `json:"id"`
 	URL    string `json:"url"`
 	Status int    `json:"status"`
-	Length int64  `json:"length"`
+	Length string  `json:"length"`
 }
 
 //WebServerslice json format
@@ -65,14 +65,15 @@ func DoRequest(req *http.Request, client http.Client, i int) {
 
 	response, err := client.Get(req.URL.String())
 	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
+	bytlenght := ByteConverter(int64(GetLenBody(req)))
 	wb := WebServer{
 		ID:     i,
 		URL:    req.URL.String(),
 		Status: response.StatusCode,
-		Length: int64(GetLenBody(req)),
+		Length: bytlenght,
 	}
 	webserver.WebServers = append(webserver.WebServers, wb)
-	ShowOutput(response.StatusCode, int64(GetLenBody(req)), req.URL.String())
+	ShowOutput(response.StatusCode, bytlenght, req.URL.String())
 
 }
 
@@ -145,14 +146,13 @@ func Fuxe(netreq NetRequest) {
 					mutex.Unlock()
 				}
 			}
-
 		}(i)
 	}
 	waitRequest.Wait()
-	//	jsonF, _ := json.Marshal(webserver)
-	//	timenow := time.Now().Format("2006-01-02-15-04-05")
-	//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + timenow + ".json"
-	//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
+	jsonF, _ := json.Marshal(webserver)
+	timenow := time.Now().Format("2006-01-02-15-04-05")
+	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] +"+"+timenow + ".json"
+	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
 }
 
@@ -191,14 +191,14 @@ func ThrowTor() proxy.Dialer {
 }
 
 //ShowOutput print prety output from a request
-func ShowOutput(status int, length int64, url string) {
+func ShowOutput(status int, length string, url string) {
 	switch {
 	case status >= 200 && status < 299:
-		Say(LIGHTGREEN, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
+		Say(LIGHTGREEN, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	case status >= 300 && status < 399:
-		Say(LIGHTBLUE, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
+		Say(LIGHTBLUE, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	case status >= 400 && status < 500:
-		Say(LIGHTRED, fmt.Sprintf(" %d - %-10s\t - %s", status, ByteConverter(length), url))
+		Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	}
 }
 
