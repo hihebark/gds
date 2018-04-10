@@ -35,7 +35,7 @@ Installation:
 
 Build:
 
-`go get github.com/hihebark/godirsearch`
+`go build`
 
 Usage:
 ------
@@ -46,7 +46,7 @@ Usage:
  █▄▄▄█
  GoDirSearch ~0.4.4-Dev
 
-Usage of /tmp/go-build023603241/command-line-arguments/_obj/exe/main:
+Usage of ./GoDirSearch:
   -cookie string
     	Cookie if needed
   -ex string
