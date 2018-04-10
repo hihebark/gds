@@ -26,7 +26,7 @@ func (p *MyMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func ShowResult(w http.ResponseWriter, r *http.Request) {
 
 	data := WebServerslice{}
-	jsonfile, err := os.Open("data/results/www.exemple.com/www.exemple.com+2018-04-09-18-26-02.json")
+	jsonfile, err := os.Open("data/results/www.ouedkniss.com/www.ouedkniss.com+2018-04-09-18-26-02.json")
 	defer jsonfile.Close()
 	Printerr(err, "gui:ShowResult:os.Open: ")
 	jsonParser := json.NewDecoder(jsonfile)
@@ -34,9 +34,8 @@ func ShowResult(w http.ResponseWriter, r *http.Request) {
 		Printerr(err, "gui:ShowResult:Parsing config file error")
 	}
 
-	htmlTemplate := template.New("Godirsearch")
-	//	htmlTemplate, err = htmlTemplate.ParseFiles("data/web/index.html") << to fix this
-	htmlTemplate, err = htmlTemplate.Parse(ReturnStringFile("data/web/index.html"))
+	htmlTemplate := template.New("index.html")
+	htmlTemplate, err = htmlTemplate.ParseFiles("data/web/index.html")
 	Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles:")
 	htmlTemplate.Execute(w, data.WebServers)
 }
