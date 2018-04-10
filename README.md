@@ -26,6 +26,17 @@ I started this project to learn Go-Lang so if you spot an error be kind a report
 
 This project is still in a development.
 
+Installation & Build:
+------
+
+Installation:
+
+`go get github.com/hihebark/godirsearch`
+
+Build:
+
+`go get github.com/hihebark/godirsearch`
+
 Usage:
 ------
 
@@ -33,27 +44,33 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.4.0Dev
-Usage of GoDirSearch:
+ GoDirSearch ~0.4.4-Dev
+
+Usage of /tmp/go-build023603241/command-line-arguments/_obj/exe/main:
   -cookie string
-    	cookie
+    	Cookie if needed
   -ex string
-    	separate with coma like php,txt ...
+    	Extension separate by comma like [php,txt]
   -host string
-    	Host to brutforce
+    	Host/Target to search for subdirectory example: http://example.com/
+  -http
+    	http server to consult the result
   -proxy string
     	Use a proxy to brutforce
   -proxyfile string
-    	Use a proxy file
+    	Use a proxy file (not set)
   -thread int
-    	Number of thread (default 4)
+    	Number of thread (not set) (default 4)
   -tor
-    	Brutforce using Tor
+    	Use the test with Tor for anonymity
   -useragent string
-    	userAgent
+    	UserAgent if not set it will generate one randomly
   -worlist string
-    	wordlist to brutforce (default "test.txt")
+    	Wordlist to use for the search (default "data/wordlist.txt")
+
 
 ```
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
+
+:octocat:

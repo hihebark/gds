@@ -108,3 +108,12 @@ func GetRandLine(file string) string {
 	Printerr(err, fmt.Sprintf("utils:GetRandLine: f:%s", file))
 	return line
 }
+
+//GetListFile get the list of a file in a directory.
+func GetListFile(dir string) string {
+
+	listfile, err := Execute("/bin/ls", []string{dir})
+	Printerr(err, "utils:GetListFile:Execute")
+	return listfile
+
+}

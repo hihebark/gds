@@ -5,12 +5,15 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-light bg-primary">
-			<a class="navbar-brand" href="#">
-				<img src="logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
-				Godirsearch
+			<a class="navbar-brand" href="https://github.com/hihebark/godirsearch">
+				<img src="data/web/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+				<span class="text-white">Godirsearch</span>
 			</a>
 		</nav>
-		<table class="table table-light table-hover">
+		</br>
+		<h4 style="margin-left: 20px;">Results:</h4>
+		</br>
+		<table class="table table-light table-hover table-bordered">
 			<thead class="thead-dark">
 				<tr>
 					<th scope="col">Id</th>
@@ -20,7 +23,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{{ range $key, $val := . }}
+				{{ range . }}
 					<tr>
 						<th scope="row">{{.ID}}</th>
 						<td>{{.URL}}</td>
