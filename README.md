@@ -50,7 +50,7 @@ Usage of ./GoDirSearch:
   -cookie string
     	Cookie if needed
   -ex string
-    	Extension separate by comma like [php,txt]
+    	Extension separate by comma like php,txt
   -host string
     	Host/Target to search for subdirectory example: http://example.com/
   -http
@@ -67,7 +67,6 @@ Usage of ./GoDirSearch:
     	UserAgent if not set it will generate one randomly
   -worlist string
     	Wordlist to use for the search (default "data/wordlist.txt")
-
 
 ```
 
