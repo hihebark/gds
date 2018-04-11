@@ -17,18 +17,21 @@ type ServeMux struct {
 //ServeHTTP hundle results route
 func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path == "/results" {
-		mutex.mutex.RLock()
-		defer mutex.mutex.RUnlock()
-		ShowResult(w, r)
+	switch r.URL.Path{
+		case "/results":
+			mutex.mutex.RLock()
+			defer mutex.mutex.RUnlock()
+			ShowResult(w, r)
+			return
+		case "/Logo.png":
+			http.ServeFile(w, r, "data/web/Logo.png")
+			return
+		case "/results/{folder}": //work on it!
+			return
+		default:
+			http.Redirect(w, r, "/results", http.StatusFound)
 		return
 	}
-	if r.URL.Path == "/Logo.png"{ // Work on it!
-		http.ServeFile(w, r, "data/web/Logo.png")
-		return
-	}
-	http.Redirect(w, r, "/results", http.StatusFound)
-	return
 
 }
 

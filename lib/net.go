@@ -146,6 +146,7 @@ func Fuxe(netreq NetRequest) {
 					mutex.Unlock()
 				}
 			}
+			waitRequest.Done()
 		}(i)
 	}
 	waitRequest.Wait()
