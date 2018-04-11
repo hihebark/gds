@@ -26,16 +26,16 @@ var (
 
 func init() {
 
-	ex = flag.String("ex", "", "Extension separate by comma like [php,txt]")
-	tor = flag.Bool("tor", false, "Use the test with Tor for anonymity")
-	host = flag.String("host", "", "Host/Target to search for subdirectory example: http://example.com/")
-	proxy = flag.String("proxy", "", "Use a proxy to brutforce")
-	thread = flag.Int("thread", 4, "Number of thread (not set)")
-	cookie = flag.String("cookie", "", "Cookie if needed")
-	wordlist = flag.String("worlist", "data/wordlist.txt", "Wordlist to use for the search")
-	proxyfile = flag.String("proxyfile", "", "Use a proxy file (not set)")
-	http = flag.Bool("http", false, "http server to consult the result")
-	userAgent = flag.String("useragent", "", "UserAgent if not set it will generate one randomly")
+	ex = flag.String("ex", "", "Extension separate by comma like php,txt .")
+	tor = flag.Bool("tor", false, "Use the test with Tor for anonymity.")
+	host = flag.String("host", "", "Host/Target to search for subdirectory example: http://example.com/ .")
+	proxy = flag.String("proxy", "", "Use a proxy to brutforce.")
+	thread = flag.Int("thread", 4, "Number of thread (not set).")
+	cookie = flag.String("cookie", "", "Cookie if needed.")
+	wordlist = flag.String("worlist", "data/wordlist.txt", "Wordlist to use for the search.")
+	proxyfile = flag.String("proxyfile", "", "Use a proxy file (not set).")
+	http = flag.Bool("http", false, "http server to consult the result.")
+	userAgent = flag.String("useragent", "", "UserAgent if not set it will generate one randomly.")
 
 }
 

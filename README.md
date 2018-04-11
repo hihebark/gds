@@ -46,30 +46,30 @@ Usage:
  █▄▄▄█
  GoDirSearch ~0.4.4-Dev
 
-Usage of ./GoDirSearch:
+Usage of ./godirsearch:
   -cookie string
-    	Cookie if needed
+    	Cookie if needed.
   -ex string
-    	Extension separate by comma like php,txt
+    	Extension separate by comma like php,txt .
   -host string
-    	Host/Target to search for subdirectory example: http://example.com/
+    	Host/Target to search for subdirectory example: http://example.com/ .
   -http
-    	http server to consult the result
+    	http server to consult the result.
   -proxy string
-    	Use a proxy to brutforce
+    	Use a proxy to brutforce.
   -proxyfile string
-    	Use a proxy file (not set)
+    	Use a proxy file (not set).
   -thread int
-    	Number of thread (not set) (default 4)
+    	Number of thread (not set). (default 4)
   -tor
-    	Use the test with Tor for anonymity
+    	Use the test with Tor for anonymity.
   -useragent string
-    	UserAgent if not set it will generate one randomly
+    	UserAgent if not set it will generate one randomly.
   -worlist string
-    	Wordlist to use for the search (default "data/wordlist.txt")
+    	Wordlist to use for the search. (default "data/wordlist.txt")
 
 ```
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
-:octocat:
+`CopyLeft`

@@ -23,6 +23,10 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ShowResult(w, r)
 		return
 	}
+	if r.URL.Path == "/Logo.png"{ // Work on it!
+		http.ServeFile(w, r, "data/web/Logo.png")
+		return
+	}
 	http.Redirect(w, r, "/results", http.StatusFound)
 	return
 
