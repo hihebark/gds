@@ -6,6 +6,6 @@ test.go
 .Trashes
 ehthumbs.db
 Thumbs.db
-./godirsearch
+godirsearch*
 todo.txt
 data/results/*
