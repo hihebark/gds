@@ -16,14 +16,18 @@
 			<thead class="thead-dark">
 				<tr>
 					<th scope="col">Id</th>
-					<th scope="col">Folder</th>
+					<th scope="col">Url</th>
+					<th scope="col">Status</th>
+					<th scope="col">Length</th>
 				</tr>
 			</thead>
 			<tbody>
-				{{ range $k, $v := . }}
+				{{ range . }}
 					<tr>
-						<th scope="row">{{$k}}</th>
-						<td><a href="results/{{$v}}">{{$v}}</a></td>
+						<th scope="row">{{.ID}}</th>
+						<td>{{.URL}}</td>
+						<td>{{.Status}}</td>
+						<td>{{.Length}}</td>
 					</tr>
 				{{ end }}
 			</tbody>

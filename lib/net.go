@@ -47,8 +47,8 @@ type WebServerslice struct {
 	WebServers []WebServer `json:"host"`
 }
 
-//CheckConnectivty check if the provided host is up or not.
-func CheckConnectivty(host string) int {
+//CheckConnectivity check if the provided host is up or not.
+func CheckConnectivity(host string) int {
 
 	resp, err := http.Get(host)
 	if err != nil {

@@ -56,7 +56,7 @@ func main() {
 
 		re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
 
-		status := lib.CheckConnectivty(*host)
+		status := lib.CheckConnectivity(*host)
 
 		if re.MatchString(*host) && (status >= 200 && status < 300) {
 

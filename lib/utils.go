@@ -110,10 +110,20 @@ func GetRandLine(file string) string {
 }
 
 //GetListFile get the list of a file in a directory.
-func GetListFile(dir string) string {
+func GetListFile(dir string) []string {
 
 	listfile, err := Execute("/bin/ls", []string{dir})
 	Printerr(err, "utils:GetListFile:Execute")
-	return listfile
+	return strings.Split(listfile, "\n")
 
 }
+
+//Existe check if a folder or file existe
+func Existe(path string) bool {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
