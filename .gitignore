@@ -7,5 +7,6 @@ test.go
 ehthumbs.db
 Thumbs.db
 godirsearch*
+godirsearch
 todo.txt
 data/results/*
