@@ -75,24 +75,6 @@ func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 
 }
 
-//ShowResult show the result
-func ShowResult(w http.ResponseWriter, r *http.Request) {
-
-	data := WebServerslice{}
-	jsonfile, err := os.Open("data/results/www.ouedkniss.com/www.ouedkniss.com+2018-04-09-18-26-02.json")
-	defer jsonfile.Close()
-	Printerr(err, "gui:ShowResult:os.Open")
-	jsonParser := json.NewDecoder(jsonfile)
-	if err = jsonParser.Decode(&data); err != nil {
-		Printerr(err, "gui:ShowResult:Parsing config file error")
-	}
-
-	htmlTemplate := template.New("result.html")
-	htmlTemplate, err = htmlTemplate.ParseFiles("data/web/result.html")
-	Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
-	htmlTemplate.Execute(w, data.WebServers)
-}
-
 //StartListning start listning to the given port
 func StartListning() {
 	Info("Stating server on http://localhost:9011/ | http://[::1]:9011/")

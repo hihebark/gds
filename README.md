@@ -44,7 +44,7 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.4.4-Dev
+ GoDirSearch ~0.5.0-Dev
 
 Usage of ./godirsearch:
   -cookie string
@@ -72,4 +72,3 @@ Usage of ./godirsearch:
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
-`CopyLeft`
