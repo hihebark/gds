@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+	//"strings"
 )
 
 // ServeMux for concurrency
@@ -21,13 +22,17 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case r.URL.Path == "/":
 			mutex.mutex.RLock()
 			defer mutex.mutex.RUnlock()
-			ShowResult(w, r)
+			ShowResultsFile(w, r, "data/results")
 			return
 		case r.URL.Path == "/Logo.png":
+			mutex.mutex.RLock()
+			defer mutex.mutex.RUnlock()
 			http.ServeFile(w, r, "data/web/Logo.png")
 			return
-		case r.URL.Path == "/results"://case len(strings.Split(r.URL.Path, "/")) == 2:
-			ShowResultsFile(w, r, "data/results")
+		case r.URL.Query().Get("p") != "":
+			mutex.mutex.RLock()
+			defer mutex.mutex.RUnlock()
+			ShowResultsFile(w, r, r.URL.Query().Get("p"))
 			return
 		default:
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -37,27 +42,35 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 //ShowResultsFile see if the directory is in the data/results and show all json files in it
-func ShowResultsFile (w http.ResponseWriter, r *http.Request, folder string){
+func ShowResultsFile (w http.ResponseWriter, r *http.Request, path string){
 
-	if Existe(folder) {
-		list := GetListFile(folder)
-		var listfile []string
-		for _, value := range list {
-			if value == ""{
-				break
+	if Existe(path) {
+		f, err := os.Stat(path)
+		Printerr(err, "ShowResultsFile:os.Stat")
+		if f.Mode().IsDir() {
+			Info(fmt.Sprintf("it's a directory %s", path))
+			htmlTemplate := template.New("index.html")
+			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/index.html")
+			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
+			list := GetListFile(path)
+			var listfile []string
+			for k, v := range list {
+				if list[k] != "" {
+					listfile = append(listfile, path+"/"+v)
+				}
 			}
-			f, err := os.Stat(folder+"/"+value)
-			Printerr(err, "ShowResultsFile:os.Stat")
-			if f.Mode().IsDir() {
-				listfile = append(listfile, value)
-			}
+			htmlTemplate.Execute(w, listfile)
+		} else {
+			Info(fmt.Sprintf("its a file %s", path))
+			htmlTemplate := template.New("result.html")
+			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/result.html")
+			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
+			data := DecodeJsonFile(path)
+			htmlTemplate.Execute(w, data.WebServers)
 		}
-		htmlTemplate := template.New("index.html")
-		htmlTemplate, err := htmlTemplate.ParseFiles("data/web/index.html")
-		Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
-		htmlTemplate.Execute(w, listfile)
+
 	}else{
-		Bad("File don't existe.")
+		Bad(fmt.Sprintf("%s File don't existe.", path))
 	}
 	
 }
@@ -88,4 +101,17 @@ func StartListning() {
 	if err != nil {
 		fmt.Printf("StartListning:error: %s\n", err)
 	}
+}
+
+//DecodeJsonFile
+func DecodeJsonFile (path string) WebServerslice {
+	data := WebServerslice{}
+	jsonfile, err := os.Open(path)
+	defer jsonfile.Close()
+	Printerr(err, "gui:ShowResult:os.Open")
+	jsonParser := json.NewDecoder(jsonfile)
+	if err = jsonParser.Decode(&data); err != nil {
+		Printerr(err, "gui:ShowResult:Parsing config file error")
+	}
+	return data
 }

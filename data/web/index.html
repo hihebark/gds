@@ -23,7 +23,7 @@
 				{{ range $k, $v := . }}
 					<tr>
 						<th scope="row">{{$k}}</th>
-						<td><a href="results/{{$v}}">{{$v}}</a></td>
+						<td><a href="results?p={{$v}}">{{$v}}</a></td>
 					</tr>
 				{{ end }}
 			</tbody>
