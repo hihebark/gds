@@ -126,4 +126,3 @@ func Existe(path string) bool {
 	}
 	return true
 }
-

@@ -14,7 +14,7 @@ import (
 
 //Const
 const (
-	version string = "0.4.4-Dev"
+	version string = "0.5.0-Dev"
 	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 )
 

@@ -18,31 +18,31 @@ type ServeMux struct {
 //ServeHTTP hundle results route
 func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	switch{
-		case r.URL.Path == "/":
-			mutex.mutex.RLock()
-			defer mutex.mutex.RUnlock()
-			ShowResultsFile(w, r, "data/results")
-			return
-		case r.URL.Path == "/Logo.png":
-			mutex.mutex.RLock()
-			defer mutex.mutex.RUnlock()
-			http.ServeFile(w, r, "data/web/Logo.png")
-			return
-		case r.URL.Query().Get("p") != "":
-			mutex.mutex.RLock()
-			defer mutex.mutex.RUnlock()
-			ShowResultsFile(w, r, r.URL.Query().Get("p"))
-			return
-		default:
-			http.Redirect(w, r, "/", http.StatusFound)
-			return
+	switch {
+	case r.URL.Path == "/":
+		mutex.mutex.RLock()
+		defer mutex.mutex.RUnlock()
+		ShowResultsFile(w, r, "data/results")
+		return
+	case r.URL.Path == "/Logo.png":
+		mutex.mutex.RLock()
+		defer mutex.mutex.RUnlock()
+		http.ServeFile(w, r, "data/web/Logo.png")
+		return
+	case r.URL.Query().Get("p") != "":
+		mutex.mutex.RLock()
+		defer mutex.mutex.RUnlock()
+		ShowResultsFile(w, r, r.URL.Query().Get("p"))
+		return
+	default:
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
 	}
 
 }
 
 //ShowResultsFile see if the directory is in the data/results and show all json files in it
-func ShowResultsFile (w http.ResponseWriter, r *http.Request, path string){
+func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 
 	if Existe(path) {
 		f, err := os.Stat(path)
@@ -65,14 +65,14 @@ func ShowResultsFile (w http.ResponseWriter, r *http.Request, path string){
 			htmlTemplate := template.New("result.html")
 			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/result.html")
 			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
-			data := DecodeJsonFile(path)
+			data := DecodeJSONFile(path)
 			htmlTemplate.Execute(w, data.WebServers)
 		}
 
-	}else{
+	} else {
 		Bad(fmt.Sprintf("%s File don't existe.", path))
 	}
-	
+
 }
 
 //ShowResult show the result
@@ -103,8 +103,8 @@ func StartListning() {
 	}
 }
 
-//DecodeJsonFile
-func DecodeJsonFile (path string) WebServerslice {
+//DecodeJSONFile decode json file and return WebServerslice
+func DecodeJSONFile(path string) WebServerslice {
 	data := WebServerslice{}
 	jsonfile, err := os.Open(path)
 	defer jsonfile.Close()
