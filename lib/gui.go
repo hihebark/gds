@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
-	//"strings"
+	"strings"
 )
 
 // ServeMux for concurrency
@@ -45,10 +45,11 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 
 	if Existe(path) {
-		f, err := os.Stat(path)
-		Printerr(err, "ShowResultsFile:os.Stat")
-		if f.Mode().IsDir() {
-			Info(fmt.Sprintf("it's a directory %s", path))
+		//f, err := os.Stat(path)
+		//Printerr(err, "ShowResultsFile:os.Stat")
+		//if f.Mode().IsDir() {
+		if !strings.HasSuffix(path, ".json"){
+			//Info(fmt.Sprintf("it's a directory %s", path))
 			htmlTemplate := template.New("index.html")
 			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/index.html")
 			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
@@ -61,7 +62,7 @@ func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 			}
 			htmlTemplate.Execute(w, listfile)
 		} else {
-			Info(fmt.Sprintf("its a file %s", path))
+			//Info(fmt.Sprintf("its a file %s", path))
 			htmlTemplate := template.New("result.html")
 			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/result.html")
 			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")

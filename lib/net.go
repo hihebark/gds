@@ -140,10 +140,13 @@ func Fuxe(netreq NetRequest) {
 			mutex.Unlock()
 			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
 				for _, ext := range netreq.Ex {
-					mutex.Lock()
-					req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
-					DoRequest(req, *client, i)
-					mutex.Unlock()
+					go func() {
+						mutex.Lock()
+						req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
+						DoRequest(req, *client, i)
+						mutex.Unlock()
+					}()
+					
 				}
 			}
 			waitRequest.Done()
