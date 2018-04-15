@@ -64,20 +64,19 @@ func CheckConnectivity(host string) int {
 func DoRequest(req *http.Request, client http.Client, i int) {
 
 	response, err := client.Get(req.URL.String())
-	Printerr(err, fmt.Sprintf("MakeRequest: %s", req.URL))
-	bytlenght := ByteConverter(int64(GetLenBody(req)))
+	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
 	wb := WebServer{
 		ID:     i,
 		URL:    req.URL.String(),
 		Status: response.StatusCode,
-		Length: bytlenght,
+		Length: ByteConverter(response.ContentLength),
 	}
 	webserver.WebServers = append(webserver.WebServers, wb)
-	ShowOutput(response.StatusCode, bytlenght, req.URL.String())
+	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())
 
 }
 
-//ByteConverter convert length to bytes, KB, MB, GB, TB.
+// ByteConverter convert length to bytes, KB, MB, GB, TB.
 // param  int64
 // return string
 func ByteConverter(length int64) string {
@@ -94,7 +93,7 @@ func ByteConverter(length int64) string {
 	return ""
 }
 
-//Fuxe to brute force the web-host
+// Fuxe to brute force the web-host
 // param NetRequest (struct)
 func Fuxe(netreq NetRequest) {
 
@@ -149,7 +148,6 @@ func Fuxe(netreq NetRequest) {
 					
 				}
 			}
-			waitRequest.Done()
 		}(i)
 	}
 	waitRequest.Wait()
@@ -176,15 +174,6 @@ func GetBody(req *http.Request) (string, error) {
 
 }
 
-//GetLenBody get the length of the body
-func GetLenBody(req *http.Request) int {
-	data, err := GetBody(req)
-	if err != nil {
-		Printerr(err, "GetLenBody:")
-	}
-	return len(data)
-}
-
 //ThrowTor activate the the app to go throw Tor
 func ThrowTor() proxy.Dialer {
 	torurl, err := url.Parse("socks5://127.0.0.1:9050")
@@ -197,12 +186,16 @@ func ThrowTor() proxy.Dialer {
 //ShowOutput print prety output from a request
 func ShowOutput(status int, length string, url string) {
 	switch {
-	case status >= 200 && status < 299:
+	case status >= 100 && status <= 102:
+		Say(LIGHTCYAN, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+	case status >= 200 && status <= 226:
 		Say(LIGHTGREEN, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
-	case status >= 300 && status < 399:
+	case status >= 300 && status <= 308:
 		Say(LIGHTBLUE, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
-	case status >= 400 && status < 500:
+	case status >= 400 && status <= 451:
 		Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+	case status >= 500 && status <= 512:
+		Say(YELLOW, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	}
 }
 

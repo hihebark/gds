@@ -56,3 +56,11 @@ Mozilla/4.0 (compatible; MSIE 6.1; Windows XP)
 Mozilla/4.0 (compatible; MSIE 6.01; Windows NT 6.0)
 Mozilla/4.0 (compatible; MSIE 6.0b; Windows NT 5.1; DigExt)
 Mozilla/4.0 (compatible; MSIE 6.0b; Windows NT 5.1)
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) # Chrome/19.0.1042.0 Safari/535.21
+Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.21 (KHTML, like Gecko) # Chrome/19.0.1041.0 Safari/535.21
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) # Chrome/19.0.1036.7 Safari/535.20
+Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.2 (KHTML, like Gecko) # Chrome/18.6.872.0 Safari/535.2 UNTRUSTED/1.0 3gpp-gba UNTRUSTED/1.0
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/535.19 (KHTML, like Gecko) # Chrome/18.0.1025.11 Safari/535.19
+Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) # Chrome/17.0.963.56 Safari/535.11
+Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) # Chrome/17.0.963.56 Safari/535.11
+Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) # Chrome/17.0.963.56 Safari/535.11
