@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"runtime"
 	"time"
 
 	"golang.org/x/net/proxy"
@@ -126,6 +127,7 @@ func Fuxe(netreq NetRequest) {
 			"User-Agent": {netreq.UserAgent},
 		},
 	}
+	runtime.GOMAXPROCS(4)
 	for i := 0; i < pathLength; i++ {
 
 		go func(i int) {
@@ -137,12 +139,12 @@ func Fuxe(netreq NetRequest) {
 			mutex.Unlock()
 			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
 				for _, ext := range netreq.Ex {
-					go func() {
+					go func(ext string) {
 						mutex.Lock()
 						req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
 						DoRequest(req, *client, i)
 						mutex.Unlock()
-					}()
+					}(ext)
 					
 				}
 			}
