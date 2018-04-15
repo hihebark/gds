@@ -118,7 +118,6 @@ func Fuxe(netreq NetRequest) {
 	}
 	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
 	waitRequest.Add(pathLength)
-	murl, _ := url.ParseRequestURI(netreq.Host)
 	client := &http.Client{Transport: transport}
 	req := &http.Request{
 		Method: "GET",
@@ -133,8 +132,7 @@ func Fuxe(netreq NetRequest) {
 
 			defer waitRequest.Done()
 			mutex.Lock()
-			murl.Path = allPath[i]
-			req.URL = murl
+			req.URL, _ = url.Parse(netreq.Host+allPath[i])
 			DoRequest(req, *client, i)
 			mutex.Unlock()
 			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
