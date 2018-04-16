@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
-	"runtime"
 	"time"
 
 	"golang.org/x/net/proxy"
@@ -127,14 +127,14 @@ func Fuxe(netreq NetRequest) {
 			"User-Agent": {netreq.UserAgent},
 		},
 	}
-	runtime.GOMAXPROCS(4)
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	for i := 0; i < pathLength; i++ {
 
 		go func(i int) {
 
 			defer waitRequest.Done()
 			mutex.Lock()
-			req.URL, _ = url.Parse(netreq.Host+allPath[i])
+			req.URL, _ = url.Parse(netreq.Host + allPath[i])
 			DoRequest(req, *client, i)
 			mutex.Unlock()
 			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
@@ -145,7 +145,7 @@ func Fuxe(netreq NetRequest) {
 						DoRequest(req, *client, i)
 						mutex.Unlock()
 					}(ext)
-					
+
 				}
 			}
 		}(i)
@@ -183,7 +183,7 @@ func ThrowTor() proxy.Dialer {
 	return dialer
 }
 
-//ShowOutput print prety output from a request
+//ShowOutput print pretty output from a request
 func ShowOutput(status int, length string, url string) {
 	switch {
 	case status >= 100 && status <= 102:
@@ -199,7 +199,7 @@ func ShowOutput(status int, length string, url string) {
 	}
 }
 
-//ReturnURL to return http.URL
+//ReturnURL to return HTTP.URL
 func ReturnURL(host string) (*url.URL, error) {
 
 	murl, err := url.ParseRequestURI(host)
