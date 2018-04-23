@@ -1,0 +1,11 @@
+{
+	"ImportPath": "github.com/hihebark/godirsearch",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "golang.org/x/net/proxy",
+			"Rev": "6078986fec03a1dcc236c34816c71b0e05018fda"
+		}
+	]
+}

@@ -45,9 +45,7 @@ func ReturnStringFile(filePath string) string {
 	if err != nil {
 		log.Fatalln(err.Error() + `: ` + filePath)
 		os.Exit(1)
-	} else {
-		defer file.Close()
-	}
+	} defer file.Close()
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
