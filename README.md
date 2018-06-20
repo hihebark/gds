@@ -33,7 +33,9 @@ Build:
 
 `go build`
 
-Or get a pre-released version `https://github.com/hihebark/godirsearch/releases`
+Or get a pre-released version
+
+[Godirsearch releases](https://github.com/hihebark/godirsearch/releases)
 
 Usage:
 ------
