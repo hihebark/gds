@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-	<img src="data/web/Logo.png" width="200">
+	<img src="data/web/Logo.png" width="250">
 </p>
 
 Godirsearch
@@ -33,6 +33,8 @@ Build:
 
 `go build`
 
+Or get a pre-released version `https://github.com/hihebark/godirsearch/releases`
+
 Usage:
 ------
 
@@ -42,9 +44,8 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.5.0-Dev
+ GoDirSearch ~0.5.0
 
-Usage of ./godirsearch:
   -cookie string
     	Cookie if needed.
   -ex string
@@ -63,7 +64,7 @@ Usage of ./godirsearch:
     	Use the test with Tor for anonymity.
   -useragent string
     	UserAgent if not set it will generate one randomly.
-  -worlist string
+  -wordlist string
     	Wordlist to use for the search. (default "data/wordlist.txt")
 
 ```
