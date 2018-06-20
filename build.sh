@@ -1,6 +1,6 @@
 #!/bin/bash
 BUILD_FOLDER=build
-VERSION=$(cat main.go | grep "version " | awk '{print $4}')
+VERSION=$(cat main.go | grep "version " | cut -d '"' -f 2)
 
 bin_dep() {
     BIN=$1
