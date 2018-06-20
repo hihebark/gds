@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-	<img src="https://golang.org/doc/gopher/pkg.png">
+	<img src="data/godirsearch.png" width="100">
 </p>
 
 Godirsearch
