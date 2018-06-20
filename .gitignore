@@ -11,5 +11,4 @@ godirsearch
 todo.txt
 data/results/*
 build
-vendor
 Godeps
