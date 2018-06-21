@@ -101,15 +101,7 @@ func main() {
 		}
 
 	} else {
-
-		if !*http {
-			lib.Que("No host argument found! add one of the argument -host | http")
-			flag.PrintDefaults()
-			os.Exit(0)
-		} else {
-			lib.StartListning()
-		}
-
+		lib.StartListning()
 	}
 
 	/***************************************************************************
