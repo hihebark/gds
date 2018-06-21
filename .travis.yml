@@ -15,5 +15,6 @@ script:
   - go build ./...
 
 after_success:
+  - export CODECOV_TOKEN="34dfb5a9-348d-4742-861d-cab5505b3d25"
   - bash <(curl -s https://codecov.io/bash)
 
