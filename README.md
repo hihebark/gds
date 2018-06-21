@@ -11,6 +11,9 @@
     <a href="https://github.com/hihebark/godirsearch/blob/master/LICENSE">
         <img src="https://img.shields.io/aur/license/yaourt.svg" alt="license">
     </a>
+    <a href="https://codecov.io/gh/hihebark/godirsearch">
+        <img src="https://codecov.io/gh/hihebark/godirsearch/branch/master/graph/badge.svg" />
+    </a>
 </p>
 
 <p align="center">
