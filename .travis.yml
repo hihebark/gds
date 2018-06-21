@@ -2,7 +2,18 @@ language: go
 
 go:
   - "1.x"
+
+matrix:
+  allow_failures:
+    - go: master
+  fast_finish: true
+
 before_install:
   - go get -v golang.org/x/net/proxy
+
 script:
   - go build ./...
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
