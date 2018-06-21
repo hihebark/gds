@@ -1,32 +1,62 @@
 <html>
 	<head>
 		<title>Godirsearch</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		
 	</head>
-	<body>
+	<body class="bg-dark ">
 		<nav class="navbar navbar-light bg-primary">
-			<a class="navbar-brand" href="https://github.com/hihebark/godirsearch">
-				<img src="Logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+			<a class="navbar-brand" href="/" title="Godirsearch">
+				<img src="logo.png" width="45" class="img-responsive d-inline-block align-top" alt="">
 				<span class="text-white">Godirsearch</span>
 			</a>
 		</nav>
-		</br>
-		<h4 style="margin-left: 20px;">Results:</h4>
-		<table class="table table-light table-hover table-bordered">
-			<thead class="thead-dark">
-				<tr>
-					<th scope="col">Id</th>
-					<th scope="col">Path</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{ range $k, $v := . }}
+		<main role="main" class="container">
+			</br>
+			<div class="row">
+				<div class="col-sm">
+					<div class="card text-center" id="card_findings">
+						<div class="card-body">
+							<h3 class="card-title" id="card_findings_value">0</h3>
+							<p class="card-text" id="card_findings_desc">Target</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm">
+					<div class="card text-center" id="card_findings">
+						<div class="card-body">
+							<h3 class="card-title" id="card_findings_value">0</h3>
+							<p class="card-text" id="card_findings_desc">Result</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			</br>
+			<h4 class="text-white" style="margin-left: 20px;">Results:</h4>
+			<table class="table table-light table-hover table-bordered">
+				<thead class="thead-dark">
 					<tr>
-						<th scope="row">{{$k}}</th>
-						<td><a href="results?p={{$v}}">{{$v}}</a></td>
+						<th scope="col"> # </th>
+						<th scope="col">Targets</th>
 					</tr>
-				{{ end }}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					{{ range $k, $v := . }}
+						<tr>
+							<th scope="row"><img src="folder.png" width="25"></th>
+							<td><a href="results?p={{$v}}">{{$v}}</a></td>
+						</tr>
+					{{ end }}
+				</tbody>
+			</table>
+		</main>
 	</body>
+	<footer>
+		<div class="container text-center text-muted">
+			<a href="https://github.com/hihebark/godirsearch">
+				<img src="https://icons.duckduckgo.com/ip3/github.com.ico" width="20"> Godirsearch</a>
+		</div>
+	</footer>
 </html>

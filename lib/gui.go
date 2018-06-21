@@ -24,10 +24,15 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		defer mutex.mutex.RUnlock()
 		ShowResultsFile(w, r, "data/results")
 		return
-	case r.URL.Path == "/Logo.png":
+	case r.URL.Path == "/logo.png":
 		mutex.mutex.RLock()
 		defer mutex.mutex.RUnlock()
-		http.ServeFile(w, r, "data/web/Logo.png")
+		http.ServeFile(w, r, "data/web/assets/img/logo.png")
+		return
+	case r.URL.Path == "/folder.png":
+		mutex.mutex.RLock()
+		defer mutex.mutex.RUnlock()
+		http.ServeFile(w, r, "data/web/assets/img/folder.png")
 		return
 	case r.URL.Query().Get("p") != "":
 		mutex.mutex.RLock()
