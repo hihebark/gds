@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-	<img src="data/web/Logo.png" width="250">
+	<img src="data/web/assets/img/logo.png" width="250">
 </p>
 
 Godirsearch
