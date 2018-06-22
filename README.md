@@ -17,7 +17,9 @@
 </p>
 
 <p align="center">
-	<img src="data/web/assets/img/logo.png" width="250">
+	<a href="https://hihebark.github.io/godirsearch/">
+		<img src="data/web/assets/img/logo.png" width="250">
+	</a>
 </p>
 
 Godirsearch
@@ -36,7 +38,7 @@ Build:
 
 `go build`
 
-Or get a pre-released version
+Or get a pre-released version:
 
 [Godirsearch releases](https://github.com/hihebark/godirsearch/releases)
 
