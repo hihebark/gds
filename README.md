@@ -18,7 +18,7 @@
 
 <p align="center">
 	<a href="https://hihebark.github.io/godirsearch/">
-		<img src="data/web/assets/img/logo.png" width="250">
+		<img src="data/web/assets/img/logo.png" width="300">
 	</a>
 </p>
 
@@ -45,9 +45,10 @@ Or get a pre-released version:
 Screenshot:
 -----------
 
-<img src="data/1.png" width="600">
-
-<img src="data/2.png" width="600">
+<p align="center">
+	<img src="data/1.png" width="800">
+	<img src="data/2.png" width="800">
+</p>
 
 Usage:
 ------
