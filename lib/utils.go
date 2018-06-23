@@ -3,9 +3,11 @@ package lib
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -111,10 +113,31 @@ func GetRandLine(file string) string {
 //GetListFile get the list of a file in a directory.
 func GetListFile(dir string) []string {
 
-	listfile, err := Execute("/bin/ls", []string{dir})
-	Printerr(err, "utils:GetListFile:Execute")
-	return strings.Split(listfile, "\n")
+	files, err := ioutil.ReadDir(dir)
+	Printerr(err, fmt.Sprintf("utils:GetListFile: d:%s", dir))
+	var listfiles []string
+	for _, f := range files {
+		listfiles = append(listfiles, f.Name())
+	}
+	return listfiles
 
+}
+
+//CountNumberFileinFolder <- WTF
+func CountNumberFileinFolder(dir string) int {
+
+	count := 0
+	if Existe(dir) {
+		err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+			if strings.HasSuffix(path, ".json") {
+				//fileList = append(fileList, path)
+				count++
+			}
+			return nil
+		})
+		Printerr(err, fmt.Sprintf("utils:CountNumberFileinFolder: d:%s", dir))
+	}
+	return count
 }
 
 //Existe check if a folder or file existe

@@ -42,6 +42,13 @@ Or get a pre-released version:
 
 [Godirsearch releases](https://github.com/hihebark/godirsearch/releases)
 
+Screenshot:
+-----------
+
+<img src="data/1.png" width="600">
+
+<img src="data/2.png" width="600">
+
 Usage:
 ------
 
@@ -51,8 +58,9 @@ Usage:
  ▄▄▄▄
  █ ▄ █
  █▄▄▄█
- GoDirSearch ~0.5.0
+ GoDirSearch ~0.6.0
 
+Usage of ./godirsearch:
   -cookie string
     	Cookie if needed.
   -ex string
@@ -73,6 +81,7 @@ Usage:
     	UserAgent if not set it will generate one randomly.
   -wordlist string
     	Wordlist to use for the search. (default "data/wordlist.txt")
+
 
 ```
 > I started this project to learn Go-Lang so if you spot an error be kind a report'it i will digg'in to find a solution. This project is still in a development.

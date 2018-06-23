@@ -15,6 +15,33 @@ type ServeMux struct {
 	mutex sync.RWMutex
 }
 
+//this not a proper way but i will get it another time 
+
+//DataFile data to send
+type DataFile struct {
+	Items        WebServerslice
+	IsDir        bool
+	CountTargets int
+	CountResults int
+}
+//DataDir data to send
+type DataDir struct {
+	Items        map[string]string
+	IsDir        bool
+	CountTargets int
+	CountResults int
+}
+
+//StartListning start listning to the given port
+func StartListning() {
+	Info("Stating server on http://localhost:9011/ | http://[::1]:9011/")
+	mux := &ServeMux{}
+	err := http.ListenAndServe(":9011", mux)
+	if err != nil {
+		fmt.Printf("StartListning:error: %s\n", err)
+	}
+}
+
 //ServeHTTP hundle results route
 func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
@@ -50,40 +77,40 @@ func (mutex *ServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 
 	if Existe(path) {
-		if !strings.HasSuffix(path, ".json") {
-			htmlTemplate := template.New("index.html")
-			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/index.html")
-			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
-			list := GetListFile(path)
-			var listfile []string
-			for k, v := range list {
-				if list[k] != "" {
-					listfile = append(listfile, path+"/"+v)
-				}
-			}
-			htmlTemplate.Execute(w, listfile)
-		} else {
-			htmlTemplate := template.New("result.html")
-			htmlTemplate, err := htmlTemplate.ParseFiles("data/web/result.html")
-			Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
-			data := DecodeJSONFile(path)
-			htmlTemplate.Execute(w, data.WebServers)
-		}
 
+		htmlTemplate := template.New("index.html")
+		htmlTemplate, err := htmlTemplate.ParseFiles("data/web/index.html")
+		Printerr(err, "gui:ShowResult:htmlTemplate.ParseFiles")
+
+		if !strings.HasSuffix(path, ".json") {
+
+			items := map[string]string{}
+			list := GetListFile(path)
+			for _, v := range list {
+				items[v] = path + "/" + v
+			}
+			d := DataDir{
+				Items:        items,
+				IsDir:        true,
+				CountTargets: len(GetListFile("data/results")),
+				CountResults: CountNumberFileinFolder("data/results"),
+			}
+			//fmt.Printf("Value of data %d", d)
+			htmlTemplate.Execute(w, d)
+
+		} else {
+			d := DataFile{
+				Items:        DecodeJSONFile(path),
+				IsDir:        false,
+				CountTargets: len(GetListFile("data/results")),
+				CountResults: CountNumberFileinFolder("data/results"),
+			}
+			htmlTemplate.Execute(w, d)
+		}
 	} else {
 		Bad(fmt.Sprintf("%s File don't existe.", path))
 	}
 
-}
-
-//StartListning start listning to the given port
-func StartListning() {
-	Info("Stating server on http://localhost:9011/ | http://[::1]:9011/")
-	mux := &ServeMux{}
-	err := http.ListenAndServe(":9011", mux)
-	if err != nil {
-		fmt.Printf("StartListning:error: %s\n", err)
-	}
 }
 
 //DecodeJSONFile decode json file and return WebServerslice
