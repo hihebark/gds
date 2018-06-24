@@ -93,7 +93,8 @@ func main() {
 				Tor:        *tor,
 				ResultFile: resultFile,
 			}
-			lib.Fuxe(req)
+			//lib.Fuxe(req)
+			lib.StartSearch(req)
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
 				lib.SayMe(lib.LIGHTRED, *host),

@@ -22,6 +22,8 @@
 	</a>
 </p>
 
+<h1 align="center">STILL IN DEVELOPMENT</h1>
+
 Godirsearch
 ===========
 

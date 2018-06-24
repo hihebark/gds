@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"runtime"
+	_"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	waitRequest sync.WaitGroup
+	wg sync.WaitGroup
 	mutex       = &sync.Mutex{}
 	webserver   WebServerslice
+	t 			= make(chan int, 8)
 )
 
 //NetRequest for Request data.
@@ -48,55 +49,9 @@ type WebServerslice struct {
 	WebServers []WebServer `json:"host"`
 }
 
-//CheckConnectivity check if the provided host is up or not.
-func CheckConnectivity(host string) int {
-
-	resp, err := http.Get(host)
-	if err != nil {
-		log.Fatalln(err)
-		os.Exit(0)
-	}
-	return resp.StatusCode
-
-}
-
-// DoRequest to make request
-// param *http.Request, http.Client
-func DoRequest(req *http.Request, client http.Client, i int) {
-
-	response, err := client.Get(req.URL.String())
-	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
-	wb := WebServer{
-		ID:     i,
-		URL:    req.URL.String(),
-		Status: response.StatusCode,
-		Length: ByteConverter(response.ContentLength),
-	}
-	webserver.WebServers = append(webserver.WebServers, wb)
-	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())
-
-}
-
-// ByteConverter convert length to bytes, KB, MB, GB, TB.
-// param  int64
-// return string
-func ByteConverter(length int64) string {
-	mbyte := []string{"bytes", "KB", "MB", "GB", "TB"}
-	if length == -1 {
-		return "0 byte"
-	}
-	for _, x := range mbyte {
-		if length < 1024.0 {
-			return fmt.Sprintf("%3.1d %s", length, x)
-		}
-		length = length / 1024.0
-	}
-	return ""
-}
-
-// Fuxe to brute force the web-host
+// StartSearch to brute force the sitweb
 // param NetRequest (struct)
-func Fuxe(netreq NetRequest) {
+func StartSearch(netreq NetRequest){
 
 	transport := &http.Transport{
 		MaxIdleConns:       10,
@@ -118,7 +73,7 @@ func Fuxe(netreq NetRequest) {
 		os.Exit(1)
 	}
 	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
-	waitRequest.Add(pathLength)
+	
 	client := &http.Client{Transport: transport}
 	req := &http.Request{
 		Method: "GET",
@@ -127,35 +82,64 @@ func Fuxe(netreq NetRequest) {
 			"User-Agent": {netreq.UserAgent},
 		},
 	}
-	runtime.GOMAXPROCS(runtime.NumCPU())
 	for i := 0; i < pathLength; i++ {
-
-		go func(i int) {
-
-			defer waitRequest.Done()
-			mutex.Lock()
-			req.URL, _ = url.Parse(netreq.Host + allPath[i])
-			DoRequest(req, *client, i)
-			mutex.Unlock()
-			if !strings.HasSuffix(req.URL.String(), "/") && (len(netreq.Ex) >= 1 && netreq.Ex[0] != "") {
-				for _, ext := range netreq.Ex {
-					go func(ext string) {
-						mutex.Lock()
-						req, _ := http.NewRequest("GET", req.URL.String()+"."+ext, nil)
-						DoRequest(req, *client, i)
-						mutex.Unlock()
-					}(ext)
-
-				}
-			}
-		}(i)
+		t <- 0
+		wg.Add(1)
+		req.URL, _ = url.Parse(netreq.Host + allPath[i])
+		go doRequest(&wg, req, *client, i, netreq.Ex)
 	}
-	waitRequest.Wait()
+	wg.Wait()
 	jsonF, _ := json.Marshal(webserver)
 	timenow := time.Now().Format("2006-01-02-15-04-05")
 	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + "-" + timenow + ".json"
 	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 
+}
+
+// DoRequest to make request
+// param *http.Request, http.Client
+func doRequest(wg *sync.WaitGroup, req *http.Request, client http.Client, i int, ex []string) {
+	defer wg.Done()
+	response, err := client.Get(req.URL.String())
+	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
+	wb := WebServer{
+		ID:     i,
+		URL:    req.URL.String(),
+		Status: response.StatusCode,
+		Length: ByteConverter(response.ContentLength),
+	}
+	webserver.WebServers = append(webserver.WebServers, wb)
+	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())	
+	<-t
+}
+
+//CheckConnectivity check if the provided host is up or not.
+func CheckConnectivity(host string) int {
+
+	resp, err := http.Get(host)
+	if err != nil {
+		log.Fatalln(err)
+		os.Exit(0)
+	}
+	return resp.StatusCode
+
+}
+
+// ByteConverter convert length to bytes, KB, MB, GB, TB.
+// param  int64
+// return string
+func ByteConverter(length int64) string {
+	mbyte := []string{"bytes", "KB", "MB", "GB", "TB"}
+	if length == -1 {
+		return "0 byte"
+	}
+	for _, x := range mbyte {
+		if length < 1024.0 {
+			return fmt.Sprintf("%3.1d %s", length, x)
+		}
+		length = length / 1024.0
+	}
+	return ""
 }
 
 //GetBody fetch the body
@@ -187,22 +171,22 @@ func ThrowTor() proxy.Dialer {
 func ShowOutput(status int, length string, url string) {
 	switch {
 	case status >= 100 && status <= 102:
-		Say(LIGHTCYAN, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		Say(LIGHTCYAN, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 200 && status <= 226:
-		Say(LIGHTGREEN, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		Say(LIGHTGREEN, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 300 && status <= 308:
-		Say(LIGHTBLUE, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		Say(LIGHTBLUE, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 400 && status <= 451:
-		Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		//os.Stdout.Sync()
+		//fmt.Printf("Testing: %s\r", url)
+		//Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	case status >= 500 && status <= 512:
-		Say(YELLOW, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		Say(YELLOW, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	}
 }
 
 //ReturnURL to return HTTP.URL
 func ReturnURL(host string) (*url.URL, error) {
-
 	murl, err := url.ParseRequestURI(host)
 	return murl, err
-
 }
