@@ -93,7 +93,6 @@ func main() {
 				Tor:        *tor,
 				ResultFile: resultFile,
 			}
-			//lib.Fuxe(req)
 			lib.StartSearch(req)
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
@@ -104,10 +103,5 @@ func main() {
 	} else {
 		lib.StartListning()
 	}
-
-	/***************************************************************************
-	 * Best regex `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
-	 * http://www.golangprograms.com/golang-package-examples/regular-expression-to-extract-domain-from-url.html
-	 ****************************************************************************/
 
 }

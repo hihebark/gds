@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	_"runtime"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -17,10 +17,10 @@ import (
 )
 
 var (
-	wg sync.WaitGroup
-	mutex       = &sync.Mutex{}
+	wg 			sync.WaitGroup
 	webserver   WebServerslice
-	t 			= make(chan int, 8)
+	mutex       = &sync.Mutex{}
+	t 			= make(chan int, 2*runtime.NumCPU())
 )
 
 //NetRequest for Request data.
