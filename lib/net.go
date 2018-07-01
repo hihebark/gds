@@ -22,6 +22,7 @@ type Work struct{
 	client http.Client
 	datas DataSlice
 	path chan string
+	done chan bool
 }
 
 func NewWork (thread int, c http.Client) *Work {
@@ -34,6 +35,7 @@ func NewWork (thread int, c http.Client) *Work {
 		datas:    DataSlice{},
 		client:   c,
 		path:     make(chan string),
+		done:     make(chan bool),
 	}
 }
 
@@ -102,12 +104,14 @@ func StartWork(o Options) {
 	}
 	work.Producer(wordlist, o.Ex)
 	work.Consumer(req)
-	
+	work.wg.Wait()
 }
 
 func (w *Work)Producer(wl []string, ext []string){
 
 	go func(){
+		w.Lock()
+		defer w.Unlock()
 		for _, path := range wl {
 			w.path <- path
 			if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
@@ -132,6 +136,8 @@ func (w *Work)Consumer(r *http.Request){
 		}
 		fmt.Printf("%d - %10s - \t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
 	}
+	w.done <- true
+	close(w.done)
 	w.wg.Done()
 }
 
