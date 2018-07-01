@@ -19,7 +19,7 @@ type ServeMux struct {
 
 //DataFile data to send
 type DataFile struct {
-	Items        WebServerslice
+	Items        DataSlice
 	IsDir        bool
 	CountTargets int
 	CountResults int
@@ -114,8 +114,8 @@ func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 //DecodeJSONFile decode json file and return WebServerslice
-func DecodeJSONFile(path string) WebServerslice {
-	data := WebServerslice{}
+func DecodeJSONFile(path string) DataSlice {
+	data := DataSlice{}
 	jsonfile, err := os.Open(path)
 	defer jsonfile.Close()
 	Printerr(err, "gui:ShowResult:os.Open")

@@ -55,34 +55,26 @@ func main() {
 	if *host != "" {
 
 		re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-
 		status := lib.CheckConnectivity(*host)
-
 		if re.MatchString(*host) && (status >= 200 && status < 300) {
-
 			if !strings.HasSuffix(*host, "/") {
 				*host += "/"
 			}
-
 			if *userAgent == "" {
 				*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
 			}
-
 			if *http {
 				go func() {
 					lib.StartListning()
 				}()
 			}
-
 			lib.Run(fmt.Sprintf("Connection to %s %s\n",
 				lib.SayMe(lib.LIGHTRED, *host),
 				lib.SayMe(lib.GREEN, "OK")))
-
 			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
 			resultFile := refolder.Split(*host, 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
-
-			req := lib.NetRequest{
+			o := lib.Options{
 				Host:       *host,
 				Proxyfile:  *proxyfile,
 				Wordlist:   *wordlist,
@@ -92,16 +84,16 @@ func main() {
 				Proxy:      *proxy,
 				Tor:        *tor,
 				ResultFile: resultFile,
+				IsUp:       *http,
 			}
-			lib.StartSearch(req)
+			lib.StartWork(o)
+			//lib.StartSearch(req)
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
 				lib.SayMe(lib.LIGHTRED, *host),
 				lib.SayMe(lib.RED, "Not reachable")))
 		}
-
 	} else {
 		lib.StartListning()
 	}
-
 }

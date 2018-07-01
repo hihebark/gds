@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"encoding/json"
+	_"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,22 +9,51 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	"strings"
+	_"strings"
 	"sync"
 	"time"
 
 	"golang.org/x/net/proxy"
 )
 
-var (
-	wg 			sync.WaitGroup
-	webserver   WebServerslice
-	mutex       = &sync.Mutex{}
-	t 			= make(chan int, 2*runtime.NumCPU())
-)
+type Work struct{
+	wg sync.WaitGroup
+	sync.RWMutex
+	threads int
+	client http.Client
+	datas DataSlice
+	path chan string
+}
+
+func NewWork (thread int, c http.Client) *Work {
+	if thread <= 0 {
+		thread = 2*runtime.NumCPU()
+	}
+	return &Work{
+		wg:       sync.WaitGroup{},
+		threads:  thread,
+		datas:    DataSlice{},
+		client:   c,
+		path:     make(chan string),
+	}
+}
+
+//WebServer json format
+type Data struct {
+	ID     int    `json:"id"`
+	URL    string `json:"url"`
+	Status int    `json:"status"`
+	Length string `json:"length"`
+	Screenshot string `json:"screenshot"`
+}
+
+//WebServerslice json format
+type DataSlice struct {
+	Data []Data `json:"host"`
+}
 
 //NetRequest for Request data.
-type NetRequest struct {
+type Options struct {
 	Host       string
 	Proxyfile  string
 	Wordlist   string
@@ -34,84 +63,157 @@ type NetRequest struct {
 	Proxy      string
 	Tor        bool
 	ResultFile string
+	IsUp     bool
 }
 
-//WebServer json format
-type WebServer struct {
-	ID     int    `json:"id"`
-	URL    string `json:"url"`
-	Status int    `json:"status"`
-	Length string `json:"length"`
-}
-
-//WebServerslice json format
-type WebServerslice struct {
-	WebServers []WebServer `json:"host"`
-}
-
-// StartSearch to brute force the sitweb
-// param NetRequest (struct)
-func StartSearch(netreq NetRequest){
-
+func StartWork(o Options) {
+	
+	//path := make(chan string)
+	done := make(chan bool)
 	transport := &http.Transport{
 		MaxIdleConns:       10,
 		IdleConnTimeout:    30 * time.Second,
 		DisableCompression: true,
 	}
-	if netreq.Proxy != "" {
-		urlProxy, err := url.Parse(netreq.Proxy)
+	if o.Proxy != "" {
+		urlProxy, err := url.Parse(o.Proxy)
 		Printerr(err, "Fuxe:url.Parse")
 		transport.Proxy = http.ProxyURL(urlProxy)
 	}
-	if netreq.Tor {
+	if o.Tor {
 		transport.Dial = ThrowTor().Dial
 	}
-	allPath := ReadFromFile(netreq.Wordlist)
-	pathLength := len(allPath)
-	if pathLength == 0 {
-		Bad("the file is empty!")
+	wordlist := ReadFromFile(o.Wordlist)
+	if len(wordlist) == 0 {
+		Bad("The file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
-	
+	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", len(wordlist), o.Ex))
 	client := &http.Client{Transport: transport}
+	work := NewWork(0, *client)
+	u, _ := url.Parse(o.Host)
 	req := &http.Request{
+		URL:    u,
 		Method: "GET",
 		Header: map[string][]string{
-			"Cookie":     {netreq.Cookie},
-			"User-Agent": {netreq.UserAgent},
+			"Cookie":          {o.Cookie},
+			"User-Agent":      {o.UserAgent},
+			"Accept-Encoding": {"identity", ""},
 		},
 	}
-	for i := 0; i < pathLength; i++ {
-		t <- 0
-		wg.Add(1)
-		req.URL, _ = url.Parse(netreq.Host + allPath[i])
-		go doRequest(&wg, req, *client, i, netreq.Ex)
+	
+//	go func(s []string){
+//		for _, path := range s {
+//			work.path <- path
+//		}
+//	}(wordlist)
+//	
+//	go func(r *http.Request, ex []string){
+//		for p := range work.path {
+//			work.wg.Add(1)
+//			r.URL.Path = p
+//			resp, err := work.client.Do(r)
+//			if err != nil {
+//				fmt.Printf("error: %s - %v\n", p, err)
+//			}
+//			fmt.Printf("%d - %s\n", resp.StatusCode, r.URL.String())
+//		}
+//		work.wg.Done()
+//	}(req, o.Ex)
+	go work.Producer(wordlist)
+	go work.Consumer(req, o.Ex)
+	
+	if !o.IsUp {
+		<-done
 	}
-	wg.Wait()
-	jsonF, _ := json.Marshal(webserver)
-	timenow := time.Now().Format("2006-01-02-15-04-05")
-	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + "-" + timenow + ".json"
-	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
+	
+}
+
+func (w *Work)Producer(wl []string){
+
+	for _, path := range wl {
+		w.path <- path
+	}
 
 }
 
-// DoRequest to make request
-// param *http.Request, http.Client
-func doRequest(wg *sync.WaitGroup, req *http.Request, client http.Client, i int, ex []string) {
-	defer wg.Done()
-	response, err := client.Get(req.URL.String())
-	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
-	wb := WebServer{
-		ID:     i,
-		URL:    req.URL.String(),
-		Status: response.StatusCode,
-		Length: ByteConverter(response.ContentLength),
+func (w *Work)Consumer(r *http.Request, ex []string){
+	
+	for p := range w.path {
+		w.wg.Add(1)
+		r.URL.Path = p
+		resp, err := w.client.Do(r)
+		if err != nil {
+			fmt.Printf("error: %s - %v\n", p, err)
+		}
+		fmt.Printf("%d - %s\n", resp.StatusCode, r.URL.String())
 	}
-	webserver.WebServers = append(webserver.WebServers, wb)
-	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())	
-	<-t
+	w.wg.Done()
 }
+
+// StartSearch to brute force the sitweb
+// param NetRequest (struct)
+//func StartSearch(netreq NetRequest){
+
+//	transport := &http.Transport{
+//		MaxIdleConns:       10,
+//		IdleConnTimeout:    30 * time.Second,
+//		DisableCompression: true,
+//	}
+//	if netreq.Proxy != "" {
+//		urlProxy, err := url.Parse(netreq.Proxy)
+//		Printerr(err, "Fuxe:url.Parse")
+//		transport.Proxy = http.ProxyURL(urlProxy)
+//	}
+//	if netreq.Tor {
+//		transport.Dial = ThrowTor().Dial
+//	}
+//	allPath := ReadFromFile(netreq.Wordlist)
+//	pathLength := len(allPath)
+//	if pathLength == 0 {
+//		Bad("the file is empty!")
+//		os.Exit(1)
+//	}
+//	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
+//	
+//	client := &http.Client{Transport: transport}
+//	req := &http.Request{
+//		Method: "GET",
+//		Header: map[string][]string{
+//			"Cookie":     {netreq.Cookie},
+//			"User-Agent": {netreq.UserAgent},
+//		},
+//	}
+//	for i := 0; i < pathLength; i++ {
+//		t <- 0
+//		wg.Add(1)
+//		req.URL, _ = url.Parse(netreq.Host + allPath[i])
+//		go doRequest(&wg, req, *client, i, netreq.Ex)
+//	}
+//	wg.Wait()
+//	jsonF, _ := json.Marshal(webserver)
+//	timenow := time.Now().Format("2006-01-02-15-04-05")
+//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + "-" + timenow + ".json"
+//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
+
+//}
+
+//// DoRequest to make request
+//// param *http.Request, http.Client
+//func doRequest(wg *sync.WaitGroup, req *http.Request, client http.Client, i int, ex []string) {
+//	defer wg.Done()
+//	response, err := client.Get(req.URL.String())
+//	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
+//	wb := WebServer{
+//		ID:     i,
+//		URL:    req.URL.String(),
+//		Status: response.StatusCode,
+//		Length: ByteConverter(response.ContentLength),
+//	}
+//	webserver.WebServers = append(webserver.WebServers, wb)
+//	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())	
+//	<-t
+//}
 
 //CheckConnectivity check if the provided host is up or not.
 func CheckConnectivity(host string) int {

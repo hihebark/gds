@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,12 +18,13 @@ func CountLine(file string) string {
 }
 
 //ReadFromFile this will read the content of file if -proxyfile is provided.
+//Using this to delete all others
 func ReadFromFile(filePath string) []string {
 
 	var line []string
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalln(err.Error() + `: ` + filePath)
+		Printerr(err, fmt.Sprintf("utils:ReturnStringFile: filePath: %s", filePath))
 		os.Exit(1)
 	} else {
 		defer file.Close()
@@ -33,7 +33,6 @@ func ReadFromFile(filePath string) []string {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		line = append(line, scanner.Text())
-		//fmt.Println(scanner.Text())
 	}
 	return line
 
@@ -45,7 +44,7 @@ func ReturnStringFile(filePath string) string {
 	var line string
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalln(err.Error() + `: ` + filePath)
+		Printerr(err, fmt.Sprintf("utils:ReturnStringFile: filePath: %s", filePath))
 		os.Exit(1)
 	}
 	defer file.Close()
@@ -53,7 +52,6 @@ func ReturnStringFile(filePath string) string {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		line += scanner.Text()
-		//fmt.Println(scanner.Text())
 	}
 	return line
 
@@ -130,7 +128,6 @@ func CountNumberFileinFolder(dir string) int {
 	if Existe(dir) {
 		err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if strings.HasSuffix(path, ".json") {
-				//fileList = append(fileList, path)
 				count++
 			}
 			return nil
