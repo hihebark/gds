@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	"strings"
 	"sync"
 	"time"
 
@@ -111,7 +110,7 @@ func (w *Work)Producer(wl []string, ext []string){
 	go func(){
 		for _, path := range wl {
 			w.path <- path
-			if !strings.HasSuffix(path, "/") && len(ext) >= 1 && ext[0] != "" {
+			if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
 				for _, e := range ext {
 					w.path <- path + "." +e
 				}
