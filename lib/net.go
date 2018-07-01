@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	_"strings"
+	"strings"
 	"sync"
 	"time"
 
@@ -69,7 +69,7 @@ type Options struct {
 func StartWork(o Options) {
 	
 	//path := make(chan string)
-	done := make(chan bool)
+	//done := make(chan bool)
 	transport := &http.Transport{
 		MaxIdleConns:       10,
 		IdleConnTimeout:    30 * time.Second,
@@ -101,52 +101,37 @@ func StartWork(o Options) {
 			"Accept-Encoding": {"identity", ""},
 		},
 	}
-	
-//	go func(s []string){
-//		for _, path := range s {
-//			work.path <- path
-//		}
-//	}(wordlist)
-//	
-//	go func(r *http.Request, ex []string){
-//		for p := range work.path {
-//			work.wg.Add(1)
-//			r.URL.Path = p
-//			resp, err := work.client.Do(r)
-//			if err != nil {
-//				fmt.Printf("error: %s - %v\n", p, err)
-//			}
-//			fmt.Printf("%d - %s\n", resp.StatusCode, r.URL.String())
-//		}
-//		work.wg.Done()
-//	}(req, o.Ex)
-	go work.Producer(wordlist)
-	go work.Consumer(req, o.Ex)
-	
-	if !o.IsUp {
-		<-done
-	}
+	work.Producer(wordlist, o.Ex)
+	work.Consumer(req)
 	
 }
 
-func (w *Work)Producer(wl []string){
+func (w *Work)Producer(wl []string, ext []string){
 
-	for _, path := range wl {
-		w.path <- path
-	}
+	go func(){
+		for _, path := range wl {
+			w.path <- path
+			if !strings.HasSuffix(path, "/") && len(ext) >= 1 && ext[0] != "" {
+				for _, e := range ext {
+					w.path <- path + "." +e
+				}
+			}
+		}
+	}()
 
 }
 
-func (w *Work)Consumer(r *http.Request, ex []string){
+func (w *Work)Consumer(r *http.Request){
 	
 	for p := range w.path {
 		w.wg.Add(1)
 		r.URL.Path = p
 		resp, err := w.client.Do(r)
-		if err != nil {
+		// To deal with response == nil <= BIG PROBLEM
+		if err != nil && resp == nil {
 			fmt.Printf("error: %s - %v\n", p, err)
 		}
-		fmt.Printf("%d - %s\n", resp.StatusCode, r.URL.String())
+		fmt.Printf("%d - %10s - \t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
 	}
 	w.wg.Done()
 }
