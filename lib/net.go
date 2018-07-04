@@ -131,8 +131,8 @@ func (w *Work)consumer(r *http.Request) {
 		if err != nil{
 			fmt.Printf("error consumer: %s - %v\n", p, err)
 		}
-		fmt.Printf("%d - %10s -\t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
-		//showOutput(resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
+		//fmt.Printf("%d - %10s -\t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
+		showOutput(resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
 		w.Unlock()
 		//w.wg.Done()
 	}
