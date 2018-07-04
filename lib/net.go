@@ -102,43 +102,42 @@ func StartWork(o Options) {
 			"Accept-Encoding": {"identity", ""},
 		},
 	}
-	work.Producer(wordlist, o.Ex)
-	work.Consumer(req)
+	go work.producer(wordlist, o.Ex)
+	for i := 0; i <= work.threads; i++ {
+		go work.consumer(req)
+	}
 	work.wg.Wait()
+	<- work.done
 }
 
-func (w *Work)Producer(wl []string, ext []string){
-
-	go func(){
-		w.Lock()
-		defer w.Unlock()
-		for _, path := range wl {
-			w.path <- path
-			if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
-				for _, e := range ext {
-					w.path <- path + "." +e
-				}
+func (w *Work)producer(wl []string, ext []string) {
+	for _, path := range wl {
+		w.path <- path
+		if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
+			for _, e := range ext {
+				w.path <- path + "." +e
 			}
 		}
-	}()
-
+	}
+	w.done <- true
 }
 
-func (w *Work)Consumer(r *http.Request){
+func (w *Work)consumer(r *http.Request) {
 	
 	for p := range w.path {
+		w.Lock()
 		w.wg.Add(1)
 		r.URL.Path = p
 		resp, err := w.client.Do(r)
-		// To deal with response == nil <= BIG PROBLEM
-		if err != nil && resp == nil {
+		if err != nil{
 			fmt.Printf("error: %s - %v\n", p, err)
+			continue
 		}
 		fmt.Printf("%d - %10s - \t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
+		w.Unlock()
 	}
-	w.done <- true
-	close(w.done)
 	w.wg.Done()
+	return
 }
 
 // StartSearch to brute force the sitweb

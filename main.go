@@ -91,7 +91,7 @@ func main() {
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
 				lib.SayMe(lib.LIGHTRED, *host),
-				lib.SayMe(lib.RED, "Not reachable")))
+				lib.SayMe(lib.RED, "Not reachable try with -proxy")))
 		}
 	} else {
 		lib.StartListning()
