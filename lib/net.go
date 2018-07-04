@@ -35,7 +35,7 @@ func NewWork (thread int, c http.Client) *Work {
 		datas:    DataSlice{},
 		client:   c,
 		path:     make(chan string),
-		done:     make(chan bool),
+		done:     make(chan bool, 2),
 	}
 }
 
@@ -68,13 +68,12 @@ type Options struct {
 }
 
 func StartWork(o Options) {
-	
-	//path := make(chan string)
-	//done := make(chan bool)
+
 	transport := &http.Transport{
-		MaxIdleConns:       10,
+		MaxIdleConns:       1,
 		IdleConnTimeout:    30 * time.Second,
 		DisableCompression: true,
+		DisableKeepAlives:  true,
 	}
 	if o.Proxy != "" {
 		urlProxy, err := url.Parse(o.Proxy)
@@ -101,12 +100,12 @@ func StartWork(o Options) {
 			"User-Agent":      {o.UserAgent},
 			"Accept-Encoding": {"identity", ""},
 		},
+		Close:  true,
 	}
-	go work.producer(wordlist, o.Ex)
 	for i := 0; i <= work.threads; i++ {
 		go work.consumer(req)
 	}
-	work.wg.Wait()
+	go work.producer(wordlist, o.Ex)
 	<- work.done
 }
 
@@ -125,84 +124,21 @@ func (w *Work)producer(wl []string, ext []string) {
 func (w *Work)consumer(r *http.Request) {
 	
 	for p := range w.path {
+		//w.wg.Add(1)
 		w.Lock()
-		w.wg.Add(1)
 		r.URL.Path = p
 		resp, err := w.client.Do(r)
 		if err != nil{
-			fmt.Printf("error: %s - %v\n", p, err)
-			continue
+			fmt.Printf("error consumer: %s - %v\n", p, err)
 		}
-		fmt.Printf("%d - %10s - \t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
+		fmt.Printf("%d - %10s -\t%s\n", resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
+		//showOutput(resp.StatusCode, ByteConverter(resp.ContentLength), r.URL.String())
 		w.Unlock()
+		//w.wg.Done()
 	}
-	w.wg.Done()
+	w.done <- true
 	return
 }
-
-// StartSearch to brute force the sitweb
-// param NetRequest (struct)
-//func StartSearch(netreq NetRequest){
-
-//	transport := &http.Transport{
-//		MaxIdleConns:       10,
-//		IdleConnTimeout:    30 * time.Second,
-//		DisableCompression: true,
-//	}
-//	if netreq.Proxy != "" {
-//		urlProxy, err := url.Parse(netreq.Proxy)
-//		Printerr(err, "Fuxe:url.Parse")
-//		transport.Proxy = http.ProxyURL(urlProxy)
-//	}
-//	if netreq.Tor {
-//		transport.Dial = ThrowTor().Dial
-//	}
-//	allPath := ReadFromFile(netreq.Wordlist)
-//	pathLength := len(allPath)
-//	if pathLength == 0 {
-//		Bad("the file is empty!")
-//		os.Exit(1)
-//	}
-//	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", pathLength, netreq.Ex))
-//	
-//	client := &http.Client{Transport: transport}
-//	req := &http.Request{
-//		Method: "GET",
-//		Header: map[string][]string{
-//			"Cookie":     {netreq.Cookie},
-//			"User-Agent": {netreq.UserAgent},
-//		},
-//	}
-//	for i := 0; i < pathLength; i++ {
-//		t <- 0
-//		wg.Add(1)
-//		req.URL, _ = url.Parse(netreq.Host + allPath[i])
-//		go doRequest(&wg, req, *client, i, netreq.Ex)
-//	}
-//	wg.Wait()
-//	jsonF, _ := json.Marshal(webserver)
-//	timenow := time.Now().Format("2006-01-02-15-04-05")
-//	filePath := "data/results/" + netreq.ResultFile + strings.Split(netreq.ResultFile, "/")[0] + "-" + timenow + ".json"
-//	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
-
-//}
-
-//// DoRequest to make request
-//// param *http.Request, http.Client
-//func doRequest(wg *sync.WaitGroup, req *http.Request, client http.Client, i int, ex []string) {
-//	defer wg.Done()
-//	response, err := client.Get(req.URL.String())
-//	Printerr(err, fmt.Sprintf("DoRequest: %s", req.URL))
-//	wb := WebServer{
-//		ID:     i,
-//		URL:    req.URL.String(),
-//		Status: response.StatusCode,
-//		Length: ByteConverter(response.ContentLength),
-//	}
-//	webserver.WebServers = append(webserver.WebServers, wb)
-//	ShowOutput(response.StatusCode, ByteConverter(response.ContentLength), req.URL.String())	
-//	<-t
-//}
 
 //CheckConnectivity check if the provided host is up or not.
 func CheckConnectivity(host string) int {
@@ -217,8 +153,6 @@ func CheckConnectivity(host string) int {
 }
 
 // ByteConverter convert length to bytes, KB, MB, GB, TB.
-// param  int64
-// return string
 func ByteConverter(length int64) string {
 	mbyte := []string{"bytes", "KB", "MB", "GB", "TB"}
 	if length == -1 {
@@ -258,21 +192,21 @@ func ThrowTor() proxy.Dialer {
 	return dialer
 }
 
-//ShowOutput print pretty output from a request
-func ShowOutput(status int, length string, url string) {
+//showOutput print pretty output from a request
+func showOutput(status int, length string, url string) {
 	switch {
 	case status >= 100 && status <= 102:
-		Say(LIGHTCYAN, fmt.Sprintf("%d - %-10s - %s", status, length, url))
+		Say(LIGHTCYAN, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 200 && status <= 226:
-		Say(LIGHTGREEN, fmt.Sprintf("%d - %-10s - %s", status, length, url))
+		Say(LIGHTGREEN, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 300 && status <= 308:
-		Say(LIGHTBLUE, fmt.Sprintf("%d - %-10s - %s", status, length, url))
+		Say(LIGHTBLUE, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 400 && status <= 451:
 		//os.Stdout.Sync()
 		//fmt.Printf("Testing: %s\r", url)
 		//Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
 	case status >= 500 && status <= 512:
-		Say(YELLOW, fmt.Sprintf("%d - %-10s - %s", status, length, url))
+		Say(YELLOW, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	}
 }
 
