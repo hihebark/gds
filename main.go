@@ -16,6 +16,7 @@ import (
 const (
 	version string = "0.6.0"
 	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
+	regexH  string = `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
 )
 
 var (
@@ -30,7 +31,7 @@ func init() {
 	tor = flag.Bool("tor", false, "Use the test with Tor for anonymity.")
 	host = flag.String("host", "", "Host/Target to search for subdirectory example: http://example.com/ .")
 	proxy = flag.String("proxy", "", "Use a proxy to brutforce.")
-	thread = flag.Int("thread", 4, "Number of thread (not set).")
+	thread = flag.Int("thread", 0, "Number of thread (not set).")
 	cookie = flag.String("cookie", "", "Cookie if needed.")
 	wordlist = flag.String("wordlist", "data/wordlist.txt", "Wordlist to use for the search.")
 	proxyfile = flag.String("proxyfile", "", "Use a proxy file (not set).")
@@ -54,9 +55,15 @@ func main() {
 
 	if *host != "" {
 
-		re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
-		status := lib.CheckConnectivity(*host)
+		re := regexp.MustCompile(regexH)
+		
+		status, err := lib.CheckConnectivity(*host)
+		if err != nil{
+			lib.Bad(fmt.Sprintf("Main:Host %s error: %v", *host, err))
+			os.Exit(1)
+		}
 		if re.MatchString(*host) && (status >= 200 && status < 300) {
+		
 			if !strings.HasSuffix(*host, "/") {
 				*host += "/"
 			}
@@ -69,8 +76,9 @@ func main() {
 				}()
 			}
 			lib.Run(fmt.Sprintf("Connection to %s %s\n",
-				lib.SayMe(lib.LIGHTRED, *host),
-				lib.SayMe(lib.GREEN, "OK")))
+								lib.SayMe(lib.LIGHTRED, *host),
+								lib.SayMe(lib.GREEN, "OK")))
+			
 			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
 			resultFile := refolder.Split(*host, 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
@@ -85,13 +93,13 @@ func main() {
 				Tor:        *tor,
 				ResultFile: resultFile,
 				IsUp:       *http,
+				Thread:     *thread,
 			}
 			lib.StartWork(o)
-			//lib.StartSearch(req)
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
-				lib.SayMe(lib.LIGHTRED, *host),
-				lib.SayMe(lib.RED, "Not reachable try with -proxy")))
+								lib.SayMe(lib.LIGHTRED, *host),
+								lib.SayMe(lib.RED, "Not reachable try with -proxy")))
 		}
 	} else {
 		lib.StartListning()

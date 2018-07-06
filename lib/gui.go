@@ -15,7 +15,7 @@ type ServeMux struct {
 	mutex sync.RWMutex
 }
 
-//this not a proper way but i will get it another time 
+//this not a proper way but i will get it another time
 
 //DataFile data to send
 type DataFile struct {
@@ -24,6 +24,7 @@ type DataFile struct {
 	CountTargets int
 	CountResults int
 }
+
 //DataDir data to send
 type DataDir struct {
 	Items        map[string]string
