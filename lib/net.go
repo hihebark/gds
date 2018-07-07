@@ -71,25 +71,29 @@ func StartWork(o Options) {
 
 	transport := &http.Transport{
 		MaxIdleConns:       1,
-		IdleConnTimeout:    30 * time.Second,
+		IdleConnTimeout:    10 * time.Second,
 		DisableCompression: true,
-		DisableKeepAlives:  true,
 	}
 	if o.Proxy != "" {
 		urlProxy, err := url.Parse(o.Proxy)
-		Printerr(err, "Fuxe:url.Parse")
+		Printerr(err, "StartWork:url.Parse")
 		transport.Proxy = http.ProxyURL(urlProxy)
 	}
 	if o.Tor {
 		transport.Dial = throwTor().Dial
 	}
-	wordlist := ReadFromFile(o.Wordlist)
+	wordlist := readFromFile(o.Wordlist)
 	if len(wordlist) == 0 {
 		Bad("The file is empty!")
 		os.Exit(1)
 	}
-	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s\n", len(wordlist), o.Ex))
-	client := &http.Client{Transport: transport}
+	tnow := time.Now().Format("15:04:05")
+	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s / Starting time: %s\n",
+					len(wordlist), o.Ex, tnow))
+	client := &http.Client{
+						Transport:     transport,
+						Timeout:       10 * time.Second,
+					}
 	work := newWork(o.Thread, *client)
 	u, _ := url.Parse(o.Host)
 	req := &http.Request{
@@ -98,20 +102,25 @@ func StartWork(o Options) {
 		Header: map[string][]string{
 			"Cookie":          {o.Cookie},
 			"User-Agent":      {o.UserAgent},
+			"Accept-Encoding": {"identity", ""},
 		},
 		Close: true,
 	}
 	go work.producer(wordlist, o.Ex)
 	for i := 0; i <= work.threads; i++ {
-		go work.consumer(req, i)
+		go work.consumer(req)
 	}
+	work.wg.Wait()
 	<- work.done
 }
 
 func (w *work) producer(wl []string, ext []string) {
 	for _, path := range wl {
+		w.wg.Add(1)
 		w.path <- path
+		//fmt.Printf("%s\n", path)
 		if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
+			w.wg.Add(1)
 			for _, e := range ext {
 				w.path <- path + "." + e
 			}
@@ -120,24 +129,21 @@ func (w *work) producer(wl []string, ext []string) {
 	w.done <- true
 }
 
-func (w *work) consumer(r *http.Request, i int) {
-
+func (w *work) consumer(r *http.Request) {
 	for p := range w.path {
-	
-		//go func(p string){
-			//w.Lock()
-			r.URL.Path = p
-			resp, err := w.client.Do(r)
-			if err != nil {
-				fmt.Printf("net:consumer-%d: path: %s error: %v\n", i, p, err)
-				//continue
-			}
-			showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
-			//fmt.Printf("%d %d - %10s -\t%s\n",i , resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
-			//w.Unlock()
-		//}(p)
+		w.Lock()
+		r.URL.Path = p
+		resp, err := w.client.Do(r)
+		if err != nil {
+			fmt.Printf("net:consumer-%d: path: %s error: %v\n", p, err)
+			//continue
+		}
+		//showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
+		fmt.Printf("%d - %10s -\t%s\n",
+				resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
+		w.Unlock()
+		w.wg.Done()
 	}
-	//w.wg.Done()
 	w.done <- true
 	//return
 }
@@ -171,6 +177,7 @@ func throwTor() proxy.Dialer {
 }
 
 func showOutput(status int, length string, url string) {
+	os.Stdout.Sync()
 	switch {
 	case status >= 100 && status <= 102:
 		Say(LIGHTCYAN, fmt.Sprintf("%d - %10s - %s", status, length, url))
@@ -179,9 +186,8 @@ func showOutput(status int, length string, url string) {
 	case status >= 300 && status <= 308:
 		Say(LIGHTBLUE, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 400 && status <= 451:
-		os.Stdout.Sync()
-		fmt.Printf("Testing: %s\r", url)
-		//Say(LIGHTRED, fmt.Sprintf("%d - %-10s\t - %s", status, length, url))
+		//fmt.Printf("Testing: %s\r", url)
+		Say(LIGHTRED, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 500 && status <= 512:
 		Say(YELLOW, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	}
