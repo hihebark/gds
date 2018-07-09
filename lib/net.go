@@ -89,11 +89,11 @@ func StartWork(o Options) {
 	}
 	tnow := time.Now().Format("15:04:05")
 	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s / Starting time: %s\n",
-					len(wordlist), o.Ex, tnow))
+		len(wordlist), o.Ex, tnow))
 	client := &http.Client{
-						Transport:     transport,
-						Timeout:       10 * time.Second,
-					}
+		Transport: transport,
+		Timeout:   10 * time.Second,
+	}
 	work := newWork(o.Thread, *client)
 	u, _ := url.Parse(o.Host)
 	req := &http.Request{
@@ -111,7 +111,7 @@ func StartWork(o Options) {
 		go work.consumer(req)
 	}
 	work.wg.Wait()
-	<- work.done
+	<-work.done
 }
 
 func (w *work) producer(wl []string, ext []string) {
@@ -135,12 +135,12 @@ func (w *work) consumer(r *http.Request) {
 		r.URL.Path = p
 		resp, err := w.client.Do(r)
 		if err != nil {
-			fmt.Printf("net:consumer-%d: path: %s error: %v\n", p, err)
+			fmt.Printf("net:consumer: %s error: %v\n", p, err)
 			//continue
 		}
 		//showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
 		fmt.Printf("%d - %10s -\t%s\n",
-				resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
+			resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
 		w.Unlock()
 		w.wg.Done()
 	}

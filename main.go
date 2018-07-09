@@ -56,19 +56,20 @@ func main() {
 	if *host != "" {
 
 		re := regexp.MustCompile(regexH)
-		
+
 		status, err := lib.CheckConnectivity(*host)
-		if err != nil{
+		if err != nil {
 			lib.Bad(fmt.Sprintf("Main:Host %s error: %v", *host, err))
 			os.Exit(1)
 		}
 		if re.MatchString(*host) && (status >= 200 && status < 300) {
-		
+
 			if !strings.HasSuffix(*host, "/") {
 				*host += "/"
 			}
 			if *userAgent == "" {
-				*userAgent = strings.Split(lib.GetRandLine("data/user-agents.txt"), "\n")[0]
+				*userAgent = lib.RandomLine("data/useragents.txt")
+				//*userAgent = strings.Split(lib.GetRandLine("data/useragents.txt"), "\n")[0]
 			}
 			if *http {
 				go func() {
@@ -76,9 +77,9 @@ func main() {
 				}()
 			}
 			lib.Run(fmt.Sprintf("Connection to %s %s\n",
-								lib.SayMe(lib.LIGHTRED, *host),
-								lib.SayMe(lib.GREEN, "OK")))
-			
+				lib.SayMe(lib.LIGHTRED, *host),
+				lib.SayMe(lib.GREEN, "OK")))
+
 			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
 			resultFile := refolder.Split(*host, 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
@@ -98,8 +99,8 @@ func main() {
 			lib.StartWork(o)
 		} else {
 			lib.Good(fmt.Sprintf("Connection to %s %s\n",
-								lib.SayMe(lib.LIGHTRED, *host),
-								lib.SayMe(lib.RED, "Not reachable try with -proxy")))
+				lib.SayMe(lib.LIGHTRED, *host),
+				lib.SayMe(lib.RED, "Not reachable try with -proxy")))
 		}
 	} else {
 		lib.StartListning()

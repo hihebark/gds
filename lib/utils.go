@@ -2,12 +2,16 @@ package lib
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 //ReadFromFile this will read the content of file if -proxyfile is provided.
@@ -29,6 +33,7 @@ func readFromFile(filePath string) []string {
 	return line
 
 }
+
 //WriteToFile to write to a file
 func WriteToFile(filePath string, instring string) {
 
@@ -40,6 +45,7 @@ func WriteToFile(filePath string, instring string) {
 	defer file.Close()
 	file.WriteString(instring + "\r\n")
 }
+
 // Execute a shell command.
 func Execute(pathExec string, args []string) (string, error) {
 
@@ -55,11 +61,45 @@ func Execute(pathExec string, args []string) (string, error) {
 
 }
 
-//GetRandLine to return random line of file
-func GetRandLine(file string) string {
-	line, err := Execute("/usr/bin/shuf", []string{"-n 1", file})
-	Printerr(err, fmt.Sprintf("utils:GetRandLine: f:%s", file))
+func RandomLine(f string) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n, _ := lineCounter(f)
+	n = r.Intn(n)
+	file, err := os.Open(f)
+	defer file.Close()
+	if err != nil {
+		fmt.Printf("utils:RandomLine:file = %s, error %v", f, err)
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	i, line := 1, ""
+	for scanner.Scan() {
+		if n == i {
+			line = scanner.Text()
+			break
+		}
+		i++
+	}
 	return line
+}
+
+func lineCounter(f string) (int, error) {
+	file, err := os.Open(f)
+	defer file.Close()
+	if err != nil {
+		fmt.Printf("utils:RandomLine:file = %s, error %v", f, err)
+	}
+	b, count := make([]byte, 32*1024), 0
+	for {
+		c, err := file.Read(b)
+		count += bytes.Count(b[:c], []byte{'\n'})
+		switch {
+		case err == io.EOF:
+			return count, nil
+		case err != nil:
+			return count, err
+		}
+	}
 }
 
 //GetListFile get the list of a file in a directory.
