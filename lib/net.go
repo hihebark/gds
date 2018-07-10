@@ -87,9 +87,9 @@ func StartWork(o Options) {
 		Bad("The file is empty!")
 		os.Exit(1)
 	}
-	tnow := time.Now().Format("15:04:05")
+	startTime := time.Now()
 	Info(fmt.Sprintf("Wordlist size: %d / Extensions:%s / Starting time: %s\n",
-		len(wordlist), o.Ex, tnow))
+		len(wordlist), o.Ex, startTime.Format("15:04:05")))
 	client := &http.Client{
 		Transport: transport,
 		Timeout:   10 * time.Second,
@@ -107,18 +107,21 @@ func StartWork(o Options) {
 		Close: true,
 	}
 	go work.producer(wordlist, o.Ex)
+	// Just for the second Goroutine the best solution i did found.
+	time.Sleep(time.Second)
 	for i := 0; i <= work.threads; i++ {
 		go work.consumer(req)
 	}
 	work.wg.Wait()
 	<-work.done
+	subtime := time.Now().Sub(startTime)
+	fmt.Printf("%s\n", subtime.Round(time.Second))
 }
 
 func (w *work) producer(wl []string, ext []string) {
 	for _, path := range wl {
 		w.wg.Add(1)
 		w.path <- path
-		//fmt.Printf("%s\n", path)
 		if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
 			w.wg.Add(1)
 			for _, e := range ext {
@@ -134,18 +137,18 @@ func (w *work) consumer(r *http.Request) {
 		w.Lock()
 		r.URL.Path = p
 		resp, err := w.client.Do(r)
+		w.Unlock()
 		if err != nil {
 			fmt.Printf("net:consumer: %s error: %v\n", p, err)
 			//continue
 		}
-		//showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
-		fmt.Printf("%d - %10s -\t%s\n",
-			resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
-		w.Unlock()
+		showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
+		//fmt.Printf("%d - %10s -\t%s\n",
+			//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
 		w.wg.Done()
 	}
+	close(w.path)
 	w.done <- true
-	//return
 }
 
 //CheckConnectivity check if the provided host is up or not.
@@ -177,7 +180,6 @@ func throwTor() proxy.Dialer {
 }
 
 func showOutput(status int, length string, url string) {
-	os.Stdout.Sync()
 	switch {
 	case status >= 100 && status <= 102:
 		Say(LIGHTCYAN, fmt.Sprintf("%d - %10s - %s", status, length, url))
@@ -186,9 +188,10 @@ func showOutput(status int, length string, url string) {
 	case status >= 300 && status <= 308:
 		Say(LIGHTBLUE, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 400 && status <= 451:
-		//fmt.Printf("Testing: %s\r", url)
 		Say(LIGHTRED, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 500 && status <= 512:
 		Say(YELLOW, fmt.Sprintf("%d - %10s - %s", status, length, url))
+	default:
+		fmt.Printf("%d - %10s - %s\n",status, length, url)
 	}
 }

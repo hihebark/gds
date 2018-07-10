@@ -69,14 +69,13 @@ func main() {
 			}
 			if *userAgent == "" {
 				*userAgent = lib.RandomLine("data/useragents.txt")
-				//*userAgent = strings.Split(lib.GetRandLine("data/useragents.txt"), "\n")[0]
 			}
 			if *http {
 				go func() {
 					lib.StartListning()
 				}()
 			}
-			lib.Run(fmt.Sprintf("Connection to %s %s\n",
+			lib.Run(fmt.Sprintf("Connection to %s %s",
 				lib.SayMe(lib.LIGHTRED, *host),
 				lib.SayMe(lib.GREEN, "OK")))
 
