@@ -2,29 +2,25 @@ package lib
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
-	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
-//CountLine Count the number of line in a wordlist to determine how much we will brutforce.
-func CountLine(file string) string {
-	count, err := Execute("/usr/bin/wc", []string{"-l", file})
-	Printerr(err, "utils:Countline")
-	return strings.Split(count, " ")[0]
-}
-
 //ReadFromFile this will read the content of file if -proxyfile is provided.
-func ReadFromFile(filePath string) []string {
+func readFromFile(filePath string) []string {
 
 	var line []string
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalln(err.Error() + `: ` + filePath)
+		Printerr(err, fmt.Sprintf("utils:ReadFromFile: filePath: %s", filePath))
 		os.Exit(1)
 	} else {
 		defer file.Close()
@@ -33,27 +29,6 @@ func ReadFromFile(filePath string) []string {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		line = append(line, scanner.Text())
-		//fmt.Println(scanner.Text())
-	}
-	return line
-
-}
-
-//ReturnStringFile return the content of file
-func ReturnStringFile(filePath string) string {
-
-	var line string
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatalln(err.Error() + `: ` + filePath)
-		os.Exit(1)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		line += scanner.Text()
-		//fmt.Println(scanner.Text())
 	}
 	return line
 
@@ -71,24 +46,7 @@ func WriteToFile(filePath string, instring string) {
 	file.WriteString(instring + "\r\n")
 }
 
-//ReadLine file line per line.
-func ReadLine(r *bufio.Reader) (string, error) {
-
-	var (
-		isPrefix = true
-		err      error
-		line, ln []byte
-	)
-	for isPrefix && err == nil {
-		line, isPrefix, err = r.ReadLine()
-		ln = append(ln, line...)
-	}
-	return string(ln), err
-
-}
-
 // Execute a shell command.
-// return cmd (output) or emty string if error.
 func Execute(pathExec string, args []string) (string, error) {
 
 	path, err := exec.LookPath(pathExec)
@@ -103,11 +61,46 @@ func Execute(pathExec string, args []string) (string, error) {
 
 }
 
-//GetRandLine to return random line of file
-func GetRandLine(file string) string {
-	line, err := Execute("/usr/bin/shuf", []string{"-n 1", file})
-	Printerr(err, fmt.Sprintf("utils:GetRandLine: f:%s", file))
+//RandomLine give you a randomly line from file
+func RandomLine(f string) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n, _ := lineCounter(f)
+	n = r.Intn(n)
+	file, err := os.Open(f)
+	defer file.Close()
+	if err != nil {
+		fmt.Printf("utils:RandomLine:file = %s, error %v", f, err)
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	i, line := 1, ""
+	for scanner.Scan() {
+		if n == i {
+			line = scanner.Text()
+			break
+		}
+		i++
+	}
 	return line
+}
+
+func lineCounter(f string) (int, error) {
+	file, err := os.Open(f)
+	defer file.Close()
+	if err != nil {
+		fmt.Printf("utils:RandomLine:file = %s, error %v", f, err)
+	}
+	b, count := make([]byte, 32*1024), 0
+	for {
+		c, err := file.Read(b)
+		count += bytes.Count(b[:c], []byte{'\n'})
+		switch {
+		case err == io.EOF:
+			return count, nil
+		case err != nil:
+			return count, err
+		}
+	}
 }
 
 //GetListFile get the list of a file in a directory.
@@ -130,7 +123,6 @@ func CountNumberFileinFolder(dir string) int {
 	if Existe(dir) {
 		err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
 			if strings.HasSuffix(path, ".json") {
-				//fileList = append(fileList, path)
 				count++
 			}
 			return nil

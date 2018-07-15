@@ -15,15 +15,16 @@ type ServeMux struct {
 	mutex sync.RWMutex
 }
 
-//this not a proper way but i will get it another time 
+//this not a proper way but i will get it another time
 
 //DataFile data to send
 type DataFile struct {
-	Items        WebServerslice
+	Items        DataSlice
 	IsDir        bool
 	CountTargets int
 	CountResults int
 }
+
 //DataDir data to send
 type DataDir struct {
 	Items        map[string]string
@@ -114,8 +115,8 @@ func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 }
 
 //DecodeJSONFile decode json file and return WebServerslice
-func DecodeJSONFile(path string) WebServerslice {
-	data := WebServerslice{}
+func DecodeJSONFile(path string) DataSlice {
+	data := DataSlice{}
 	jsonfile, err := os.Open(path)
 	defer jsonfile.Close()
 	Printerr(err, "gui:ShowResult:os.Open")
