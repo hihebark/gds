@@ -1,7 +1,7 @@
 package lib
 
 import (
-	_ "encoding/json"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sync"
 	"time"
+	"strings"
 
 	"golang.org/x/net/proxy"
 )
@@ -116,6 +117,11 @@ func StartWork(o Options) {
 	<-work.done
 	subtime := time.Now().Sub(startTime)
 	fmt.Printf("%s\n", subtime.Round(time.Second))
+	
+	jsonF, _ := json.Marshal(work.datas)
+	date := time.Now().Format("2006-01-02-15-04-05")
+	filePath := fmt.Sprintf("data/results/%s%s-%s.json", o.ResultFile, strings.Split(o.ResultFile, "/")[0], date)
+	WriteToFile(filePath, fmt.Sprintf("%+v\n", string(jsonF)))
 }
 
 func (w *work) producer(wl []string, ext []string) {
@@ -134,18 +140,28 @@ func (w *work) producer(wl []string, ext []string) {
 
 func (w *work) consumer(r *http.Request) {
 	for p := range w.path {
-		w.Lock()
-		r.URL.Path = p
-		resp, err := w.client.Do(r)
-		w.Unlock()
-		if err != nil {
-			fmt.Printf("net:consumer: %s error: %v\n", p, err)
-			//continue
-		}
-		showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
-		//fmt.Printf("%d - %10s -\t%s\n",
-			//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
-		w.wg.Done()
+		go func (){
+			w.Lock()
+			r.URL.Path = p
+			resp, err := w.client.Do(r)
+			w.Unlock()
+			if err != nil {
+				fmt.Printf("net:consumer: %s error: %v\n", p, err)
+				//continue
+			}
+			w.datas.Data = append(w.datas.Data, Data{
+				ID:         0,
+				URL:        r.URL.String(),
+				Status:     resp.StatusCode,
+				Length:     byteConverter(resp.ContentLength),
+				Screenshot: "",
+			})
+			go showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
+			//fmt.Printf("%d - %10s -\t%s\n",
+				//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
+			w.wg.Done()
+		}()
+		
 	}
 	close(w.path)
 	w.done <- true
