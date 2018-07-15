@@ -7,9 +7,9 @@ import (
 	"net/url"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
-	"strings"
 
 	"golang.org/x/net/proxy"
 )
@@ -117,7 +117,7 @@ func StartWork(o Options) {
 	<-work.done
 	subtime := time.Now().Sub(startTime)
 	fmt.Printf("%s\n", subtime.Round(time.Second))
-	
+
 	jsonF, _ := json.Marshal(work.datas)
 	date := time.Now().Format("2006-01-02-15-04-05")
 	filePath := fmt.Sprintf("data/results/%s%s-%s.json", o.ResultFile, strings.Split(o.ResultFile, "/")[0], date)
@@ -140,7 +140,7 @@ func (w *work) producer(wl []string, ext []string) {
 
 func (w *work) consumer(r *http.Request) {
 	for p := range w.path {
-		go func (){
+		go func() {
 			w.Lock()
 			r.URL.Path = p
 			resp, err := w.client.Do(r)
@@ -158,10 +158,10 @@ func (w *work) consumer(r *http.Request) {
 			})
 			go showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
 			//fmt.Printf("%d - %10s -\t%s\n",
-				//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
+			//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
 			w.wg.Done()
 		}()
-		
+
 	}
 	close(w.path)
 	w.done <- true
@@ -208,6 +208,6 @@ func showOutput(status int, length string, url string) {
 	case status >= 500 && status <= 512:
 		Say(YELLOW, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	default:
-		fmt.Printf("%d - %10s - %s\n",status, length, url)
+		fmt.Printf("%d - %10s - %s\n", status, length, url)
 	}
 }

@@ -61,6 +61,7 @@ func Execute(pathExec string, args []string) (string, error) {
 
 }
 
+//RandomLine give you a randomly line from file
 func RandomLine(f string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	n, _ := lineCounter(f)

@@ -14,9 +14,10 @@ import (
 
 //Const
 const (
-	version string = "0.6.0"
+	version string = "0.7.0"
 	LOGO    string = " ▄▄▄▄\n █ ▄ █\n █▄▄▄█\n"
 	regexH  string = `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
+	refile  string = `^(?:https?:\/\/+)`
 )
 
 var (
@@ -79,7 +80,7 @@ func main() {
 				lib.SayMe(lib.LIGHTRED, *host),
 				lib.SayMe(lib.GREEN, "OK")))
 
-			refolder := regexp.MustCompile(`^(?:https?:\/\/+)`)
+			refolder := regexp.MustCompile(refile)
 			resultFile := refolder.Split(*host, 2)[1]
 			os.MkdirAll("data/results/"+resultFile, 0755)
 			o := lib.Options{
