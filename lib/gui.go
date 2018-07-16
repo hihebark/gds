@@ -85,7 +85,7 @@ func ShowResultsFile(w http.ResponseWriter, r *http.Request, path string) {
 
 		if !strings.HasSuffix(path, ".json") {
 
-			var items map[string]string
+			items := map[string]string{}
 			list := GetListFile(path)
 			for _, v := range list {
 				items[v] = path + "/" + v

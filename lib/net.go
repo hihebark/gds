@@ -117,7 +117,7 @@ func StartWork(o Options) {
 	<-work.done
 	subtime := time.Now().Sub(startTime)
 	fmt.Printf("%s\n", subtime.Round(time.Second))
-
+	Info("Writing to file ...")
 	jsonF, _ := json.Marshal(work.datas)
 	date := time.Now().Format("2006-01-02-15-04-05")
 	filePath := fmt.Sprintf("data/results/%s%s-%s.json", o.ResultFile, strings.Split(o.ResultFile, "/")[0], date)
@@ -129,8 +129,8 @@ func (w *work) producer(wl []string, ext []string) {
 		w.wg.Add(1)
 		w.path <- path
 		if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
-			w.wg.Add(1)
 			for _, e := range ext {
+				w.wg.Add(1)
 				w.path <- path + "." + e
 			}
 		}
@@ -139,15 +139,15 @@ func (w *work) producer(wl []string, ext []string) {
 }
 
 func (w *work) consumer(r *http.Request) {
-	for p := range w.path {
-		go func() {
+	go func() {
+		for p := range w.path {
 			w.Lock()
 			r.URL.Path = p
 			resp, err := w.client.Do(r)
 			w.Unlock()
 			if err != nil {
 				fmt.Printf("net:consumer: %s error: %v\n", p, err)
-				//continue
+				continue
 			}
 			w.datas.Data = append(w.datas.Data, Data{
 				ID:         0,
@@ -157,12 +157,9 @@ func (w *work) consumer(r *http.Request) {
 				Screenshot: "",
 			})
 			go showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
-			//fmt.Printf("%d - %10s -\t%s\n",
-			//resp.StatusCode, byteConverter(resp.ContentLength), resp.Request.URL.String())
 			w.wg.Done()
-		}()
-
-	}
+		}
+	}()
 	close(w.path)
 	w.done <- true
 }
