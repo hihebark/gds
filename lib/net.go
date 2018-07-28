@@ -22,6 +22,7 @@ type work struct {
 	datas   DataSlice
 	path    chan string
 	done    chan bool
+	inc     int
 }
 
 func newWork(thread int, c http.Client) *work {
@@ -35,7 +36,11 @@ func newWork(thread int, c http.Client) *work {
 		client:  c,
 		path:    make(chan string),
 		done:    make(chan bool, 2),
+		inc:     0,
 	}
+}
+func (w *work) incr() {
+	w.inc++
 }
 
 //Data json format
@@ -128,10 +133,10 @@ func (w *work) producer(wl []string, ext []string) {
 	for _, path := range wl {
 		w.wg.Add(1)
 		w.path <- path
-		if string(path[len(path)-1]) != "/" && len(ext) >= 1 && ext[0] != "" {
+		if strings.Contains(path, "%EXT%") {
 			for _, e := range ext {
 				w.wg.Add(1)
-				w.path <- path + "." + e
+				w.path <- strings.Replace(path, "%EXT%", fmt.Sprintf(".%s", e), -1)
 			}
 		}
 	}
@@ -149,18 +154,19 @@ func (w *work) consumer(r *http.Request) {
 				fmt.Printf("net:consumer: %s error: %v\n", p, err)
 				continue
 			}
+			status, length, rurl := resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String()
 			w.datas.Data = append(w.datas.Data, Data{
-				ID:         0,
-				URL:        r.URL.String(),
-				Status:     resp.StatusCode,
-				Length:     byteConverter(resp.ContentLength),
+				ID:         w.inc,
+				URL:        rurl,
+				Status:     status,
+				Length:     length,
 				Screenshot: "",
 			})
-			go showOutput(resp.StatusCode, byteConverter(resp.ContentLength), r.URL.String())
+			w.incr()
+			go showOutput(status, length, rurl)
 			w.wg.Done()
 		}
 	}()
-	close(w.path)
 	w.done <- true
 }
 
@@ -194,17 +200,18 @@ func throwTor() proxy.Dialer {
 
 func showOutput(status int, length string, url string) {
 	switch {
-	case status >= 100 && status <= 102:
-		Say(LIGHTCYAN, fmt.Sprintf("%d - %10s - %s", status, length, url))
+	//case status >= 100 && status <= 102:
+	//Say(LIGHTCYAN, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 200 && status <= 226:
 		Say(LIGHTGREEN, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	case status >= 300 && status <= 308:
 		Say(LIGHTBLUE, fmt.Sprintf("%d - %10s - %s", status, length, url))
-	case status >= 400 && status <= 451:
-		Say(LIGHTRED, fmt.Sprintf("%d - %-10s - %s", status, length, url))
+	//case status >= 400 && status <= 451:
+	//Say(LIGHTRED, fmt.Sprintf("%d - %-10s - %s", status, length, url))
 	case status >= 500 && status <= 512:
 		Say(YELLOW, fmt.Sprintf("%d - %10s - %s", status, length, url))
 	default:
-		fmt.Printf("%d - %10s - %s\n", status, length, url)
+		fmt.Printf("Searching ...\r")
+		//fmt.Printf("%d - %10s - %s\b\r", status, length, url)
 	}
 }
