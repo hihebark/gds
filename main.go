@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"flag"
 	"fmt"
@@ -106,3 +107,4 @@ func main() {
 		lib.StartListning()
 	}
 }
+*/
