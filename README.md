@@ -46,10 +46,29 @@ Usage:
 ------
 
 `./gds -host http://example.com/ -e txt,php -wordlist ~/path/to/my/dictionary.txt`
+```sh
+ ▄▄▄▄
+ █ ▄ █ GDS
+ █▄▄▄█ 1.0
 
+  -cookie string
+        Cookie if needed.
+  -ex string
+        Extension separate by comma like php,txt .
+  -host string
+        Host/Target to search for subdirectory example: http://example.com/ .
+  -http
+        http server to consult the result.
+  -output string
+        Output result as a JSON
+  -proxy string
+        Use a proxy to brutforce.
+  -proxyfile string
+        Use a proxy file (not set).
+  -tor
+        Use the test with Tor for anonymity.
+  -useragent string
+        UserAgent if not set it will generate one randomly.
+  -wordlist string
+        Wordlist to use for the search.
 ```
-```
-> I started this project to learn Go-Lang so if you spot an error be kind a report'it i will digg'in to find a solution. This project is still in a development.
-
-> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
-

@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	name    string = "g.d.s"
-	version string = "0.7.0"
+	name    string = "GDS"
+	version string = "1.0"
 	banner  string = " ▄▄▄▄\n █ ▄ █ " + name + "\n █▄▄▄█ " + version + "\n"
 	regexH  string = `^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`
 	refile  string = `^(?:https?:\/\/+)`
@@ -50,6 +50,10 @@ func main() {
 	fmt.Printf("%s\n", banner)
 	flag.Parse()
 	catchExit()
+	if flag.NFlag() == 0 {
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
 	if *host != "" {
 		status, err := core.Healthz(*host)
 		if err != nil {
