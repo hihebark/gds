@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -14,7 +15,7 @@ import (
 type Request struct {
 	wg        sync.WaitGroup
 	client    *http.Client
-	finish    chan bool
+	done      chan bool
 	options   Options
 	req       *http.Request
 	responses []Response
@@ -26,7 +27,7 @@ func NewRequest(options Options) *Request {
 	return &Request{
 		wg:        sync.WaitGroup{},
 		client:    &http.Client{},
-		finish:    make(chan bool, 2),
+		done:      make(chan bool),
 		options:   options,
 		responses: []Response{},
 	}
@@ -36,7 +37,6 @@ func NewRequest(options Options) *Request {
 func (r *Request) Run() {
 	transport := &http.Transport{
 		MaxIdleConns:       1,
-		IdleConnTimeout:    10 * time.Second,
 		DisableCompression: true,
 	}
 	if r.options.Proxy != "" {
@@ -78,23 +78,28 @@ func (r *Request) Run() {
 	}
 	fmt.Printf("Starting....\n")
 	r.start()
+	<-r.done
+	if r.options.Output != "" {
+		resp, _ := json.Marshal(r.responses)
+		err := WriteToFile(r.options.Output, string(resp))
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		}
+	}
 }
 
 func (r *Request) start() {
 	r.wg.Add(1)
-	lines := make(chan string)
-	go readFile(r.options.Wordlist, lines)
+	paths := make(chan string)
+	go readFile(r.options.Wordlist, paths)
 	go func() {
-		for {
-			line, ok := <-lines
-			if !ok {
-				break
-			}
-			if line != "" {
-				go r.dial(line)
+		for path := range paths {
+			if path != "" {
+				go r.dial(path)
 			}
 		}
 		r.wg.Done()
+		r.done <- true
 	}()
 	r.wg.Wait()
 }
@@ -102,10 +107,12 @@ func (r *Request) start() {
 func (r *Request) dial(path string) {
 	r.wg.Add(1)
 	r.Lock()
+	time.Sleep(10 * time.Millisecond)
+	fmt.Printf("Testing: %s ... \r", path)
 	r.req.URL.Path = path
 	res, err := r.client.Do(r.req)
 	if err != nil {
-		fmt.Printf("Request:dial%v\n", err)
+		fmt.Printf("\r")
 	}
 	response := Response{
 		Timestamp: time.Now().Unix(),
@@ -117,7 +124,7 @@ func (r *Request) dial(path string) {
 	if r.options.Output != "" {
 		r.responses = append(r.responses, response)
 	}
-	if response.Status >= 200 && response.Status <= 500 {
+	if response.Status >= 200 && response.Status <= 226 {
 		fmt.Printf("[%d] %d - %10s - %s\n", response.Timestamp, response.Status, response.Length, response.Link)
 	}
 	r.Unlock()

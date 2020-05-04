@@ -1,4 +1,3 @@
-test.go
 .DS_Store
 .DS_Store?
 ._*
@@ -6,10 +5,9 @@ test.go
 .Trashes
 ehthumbs.db
 Thumbs.db
-godirsearch*
-godirsearch
-todo.txt
-data/results/*
+gds*
 build
 Godeps
+
 data/wltest.txt
+data/results/*

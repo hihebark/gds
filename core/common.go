@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -18,9 +19,20 @@ func readFile(path string, lines chan string) {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
-		lines <- scanner.Text()
+		lines <- strings.TrimRight(scanner.Text(), " ")
 	}
 	close(lines)
+}
+
+//WriteToFile to write to a file
+func WriteToFile(filePath string, content string) error {
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	file.WriteString(content + "\r\n")
+	return nil
 }
 
 func byteConverter(length int64) string {
